@@ -8,4 +8,45 @@
     tools:context="grupo19.locmess19.signUp">
 
 
+    <EditText
+        android:id="@+id/newusername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="172dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Enter Name"/>
+
+    <EditText
+        android:id="@+id/newpassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/newusername"
+        android:layout_alignRight="@+id/newusername"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="Enter Password"/>
+
+    <Button
+        android:id="@+id/newregister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/newpassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="98dp"
+        android:onClick="register_click"
+        android:text="Register" />
+
+    <Button
+        android:id="@+id/backtologin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="Back to Login"
+        android:onClick="backtologin_click"
+        android:layout_below="@+id/newregister"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
