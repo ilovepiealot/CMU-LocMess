@@ -9,7 +9,7 @@
 
 
     <EditText
-        android:id="@+id/newusername"
+        android:id="@+id/Location_Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -23,8 +23,8 @@
         android:id="@+id/newpassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/newusername"
-        android:layout_alignRight="@+id/newusername"
+        android:layout_alignEnd="@+id/Location_Name"
+        android:layout_alignRight="@+id/Location_Name"
         android:layout_centerVertical="true"
         android:ems="10"
         android:inputType="textPersonName"

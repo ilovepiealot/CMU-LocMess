@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".signUp" />
+        <activity android:name=".NewLocation" />
         <activity
             android:name=".Messages"
             android:label="@string/title_activity_messages"

@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class Messages extends AppCompatActivity {
 
@@ -55,14 +56,14 @@ public class Messages extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        }); */
 
     }
 
@@ -111,6 +112,7 @@ public class Messages extends AppCompatActivity {
          */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
+
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
@@ -143,13 +145,23 @@ public class Messages extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    // Top Rated fragment activity
-                    return Locations.newInstance();
+                    // Games fragment activity
+                    // return Locations.newInstance();
                 case 1:
                     // Games fragment activity
-                    return Locations.newInstance();
+                    // return Locations.newInstance();
                 case 2:
-                    return Locations.newInstance();
+                    // Top Rated fragment activity
+                    Bundle extras = getIntent().getExtras();
+                    if (extras != null) {
+                        String value = extras.getString("key");
+                        Toast.makeText(Messages.this,value,Toast.LENGTH_LONG).show();
+                        //The key argument here must match that used in the other activity
+                    }
+                    Locations locations = new Locations();
+                    locations.setArguments(extras);
+
+                    return locations;
             }
             //return PlaceholderFragment.newInstance(position + 1);
             return null;
