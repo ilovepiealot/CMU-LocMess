@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
-    tools:context="grupo19.locmess19.MainActivity">
+    tools:context="grupo19.locmess19.Activities.MainActivity">
 
     <EditText
         android:id="@+id/username"
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Username"
+        android:hint="@string/username"
         tools:layout_editor_absoluteX="30dp"
         tools:layout_editor_absoluteY="154dp"
         android:layout_above="@+id/password"
@@ -26,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Password"
+        android:inputType="textPassword"
+        android:hint="@string/username"
         tools:layout_editor_absoluteX="30dp"
         tools:layout_editor_absoluteY="220dp"
         android:layout_centerVertical="true"
@@ -37,7 +37,7 @@
         android:id="@+id/signIn"
         android:layout_width="115dp"
         android:layout_height="48dp"
-        android:text="Sign In"
+        android:text="@string/action_signin"
         android:onClick="signIn_click"
         tools:layout_editor_absoluteX="147dp"
         tools:layout_editor_absoluteY="343dp"
@@ -49,7 +49,7 @@
         android:id="@+id/sign_up"
         android:layout_width="115dp"
         android:layout_height="48dp"
-        android:text=" Sign Up"
+        android:text="@string/action_signup"
         android:onClick="sign_up_click"
         tools:layout_editor_absoluteX="148dp"
         tools:layout_editor_absoluteY="403dp"

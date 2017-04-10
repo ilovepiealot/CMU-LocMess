@@ -1,9 +1,7 @@
-package grupo19.locmess19;
+package grupo19.locmess19.Activities;
 //import grupo19.locmess19.frag
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,7 +19,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class Messages extends AppCompatActivity {
+import grupo19.locmess19.Fragments.Locations;
+import grupo19.locmess19.R;
+
+public class MessagesActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -87,7 +88,7 @@ public class Messages extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_signout) {
-            startActivity(new Intent(Messages.this, MainActivity.class)); //TODO destroy class after user sign out
+            startActivity(new Intent(MessagesActivity.this, MainActivity.class)); //TODO destroy class after user sign out
         }
 
         return super.onOptionsItemSelected(item);
@@ -155,7 +156,7 @@ public class Messages extends AppCompatActivity {
                     Bundle extras = getIntent().getExtras();
                     if (extras != null) {
                         String value = extras.getString("key");
-                        Toast.makeText(Messages.this,value,Toast.LENGTH_LONG).show();
+                        Toast.makeText(MessagesActivity.this,value,Toast.LENGTH_LONG).show();
                         //The key argument here must match that used in the other activity
                     }
                     Locations locations = new Locations();

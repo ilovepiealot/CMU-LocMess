@@ -1,4 +1,4 @@
-package grupo19.locmess19;
+package grupo19.locmess19.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 
-public class NewLocation extends AppCompatActivity {
+import grupo19.locmess19.Activities.MessagesActivity;
+import grupo19.locmess19.R;
+
+public class NewLocationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +23,7 @@ public class NewLocation extends AppCompatActivity {
         EditText editLocationName = (EditText)findViewById(R.id.location_name);
         String locationName = editLocationName.getText().toString();
 
-        Intent intent = new Intent(getBaseContext(), Messages.class);
+        Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
         intent.putExtra("key",locationName);
         startActivity(intent);
 

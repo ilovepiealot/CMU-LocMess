@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
-    tools:context="grupo19.locmess19.signUp">
+    tools:context="grupo19.locmess19.Activities.SignUpActivity">
 
 
     <EditText
@@ -17,7 +17,7 @@
         android:layout_marginTop="172dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Enter Name"/>
+        android:hint="@string/enter_name"/>
 
     <EditText
         android:id="@+id/newpassword"
@@ -27,8 +27,8 @@
         android:layout_alignRight="@+id/Location_Name"
         android:layout_centerVertical="true"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Enter Password"/>
+        android:inputType="textPassword"
+        android:hint="@string/enter_password"/>
 
     <Button
         android:id="@+id/newregister"
@@ -38,14 +38,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="98dp"
         android:onClick="register_click"
-        android:text="Register" />
+        android:text="@string/register" />
 
     <Button
         android:id="@+id/backtologin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
-        android:text="Back to Login"
+        android:text="@string/back_to_login"
         android:onClick="backtologin_click"
         android:layout_below="@+id/newregister"
         android:layout_centerHorizontal="true" />

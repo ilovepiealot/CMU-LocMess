@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@drawable/backgroundcolor"
-    tools:context="grupo19.locmess19.Messages">
+    tools:context="grupo19.locmess19.Activities.MessagesActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -35,19 +35,19 @@
                 android:id="@+id/tabItem3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile" />
+                android:text="@string/profile" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Messages" />
+                android:text="@string/messages" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Locations" />
+                android:text="@string/locations" />
         </android.support.design.widget.TabLayout>
 
     </android.support.design.widget.AppBarLayout>

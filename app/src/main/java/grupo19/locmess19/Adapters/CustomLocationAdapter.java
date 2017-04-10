@@ -1,4 +1,4 @@
-package grupo19.locmess19;
+package grupo19.locmess19.Adapters;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+
+import grupo19.locmess19.R;
 
 public class CustomLocationAdapter extends ArrayAdapter<String> {
 

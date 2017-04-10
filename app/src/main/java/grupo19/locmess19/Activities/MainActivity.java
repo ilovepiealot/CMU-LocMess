@@ -1,10 +1,11 @@
-package grupo19.locmess19;
+package grupo19.locmess19.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+
+import grupo19.locmess19.R;
 
 public class MainActivity extends AppCompatActivity  {
 
@@ -16,11 +17,11 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void sign_up_click(View v){
-       startActivity(new Intent(MainActivity.this, signUp.class));
+       startActivity(new Intent(MainActivity.this, SignUpActivity.class));
 
     }
     public void signIn_click(View v){
-        startActivity(new Intent(MainActivity.this, Messages.class));
+        startActivity(new Intent(MainActivity.this, MessagesActivity.class));
 
     }
 }

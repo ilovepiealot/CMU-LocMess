@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
-    tools:context="grupo19.locmess19.NewMessage">
+    tools:context="grupo19.locmess19.Activities.NewMessageActivity">
 
     <EditText
         android:id="@+id/message_title"
@@ -14,7 +14,7 @@
         android:layout_marginTop="91dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Message Title"
+        android:hint="@string/message_title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -22,7 +22,7 @@
         android:id="@+id/start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Start Date"
+        android:text="@string/set_start_date"
         android:layout_marginRight="26dp"
         android:layout_marginEnd="26dp"
         android:onClick="start_date_click"
@@ -36,7 +36,7 @@
         android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set End Date"
+        android:text="@string/set_end_date"
         android:layout_above="@+id/createnewmessage"
         android:layout_alignBaseline="@+id/start_date"
         android:layout_alignBottom="@+id/start_date"
@@ -47,7 +47,7 @@
         android:id="@+id/createnewmessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:text="@string/create"
         android:layout_alignBaseline="@+id/cancelnewmessage"
         android:layout_alignBottom="@+id/cancelnewmessage"
         android:layout_toRightOf="@+id/cancelnewmessage"
@@ -59,7 +59,7 @@
         android:id="@+id/cancelnewmessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:onClick="cancel_click"
         android:layout_marginBottom="17dp"
         android:layout_alignParentBottom="true"
@@ -74,7 +74,7 @@
         android:layout_alignLeft="@+id/start_date"
         android:layout_alignStart="@+id/start_date"
         android:layout_marginBottom="21dp"
-        android:text="data inicial" />
+        android:text="@string/initial_date" />
 
 
 </RelativeLayout>
