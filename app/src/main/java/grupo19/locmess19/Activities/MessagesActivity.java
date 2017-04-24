@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import grupo19.locmess19.Fragments.Locations;
+import grupo19.locmess19.Fragments.MessagesMenu;
 import grupo19.locmess19.R;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -150,7 +151,8 @@ public class MessagesActivity extends AppCompatActivity {
                     // return Locations.newInstance();
                 case 1:
                     // Games fragment activity
-                    // return Locations.newInstance();
+                    MessagesMenu whatthefuck = new MessagesMenu();
+                    return whatthefuck;
                 case 2:
                     // Top Rated fragment activity
                     Bundle extras = getIntent().getExtras();

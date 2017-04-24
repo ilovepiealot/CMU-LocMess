@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPassword"
-        android:hint="@string/username"
+        android:hint="Password"
         tools:layout_editor_absoluteX="30dp"
         tools:layout_editor_absoluteY="220dp"
         android:layout_centerVertical="true"

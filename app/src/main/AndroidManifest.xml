@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="grupo19.locmess19">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -18,10 +19,13 @@
         </activity>
         <activity android:name=".Activities.SignUpActivity" />
         <activity android:name=".Activities.NewLocationActivity" />
+        <activity android:name=".Activities.NewMessageActivity" />
+        <activity android:name=".Activities.InboxActivity" />
+        <activity android:name=".Activities.OutboxActivity" />
         <activity
             android:name=".Activities.MessagesActivity"
             android:label="@string/messages"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

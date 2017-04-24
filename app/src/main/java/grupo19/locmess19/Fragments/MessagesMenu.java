@@ -3,13 +3,17 @@ package grupo19.locmess19.Fragments;
 //import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import grupo19.locmess19.Activities.InboxActivity;
 import grupo19.locmess19.Activities.NewMessageActivity;
+import grupo19.locmess19.Activities.OutboxActivity;
 import grupo19.locmess19.R;
 
 
@@ -40,8 +44,26 @@ public class MessagesMenu extends Fragment {
                 startActivity(intent);
             }
         });
+
+        Button inboxButton = (Button) v.findViewById(R.id.inbox);
+        inboxButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), InboxActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button outboxButton = (Button) v.findViewById(R.id.outbox);
+        outboxButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), OutboxActivity.class);
+                startActivity(intent);
+            }
+        });
+
        return v;
     }
-
 
 }

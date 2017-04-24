@@ -14,7 +14,7 @@
         android:layout_marginTop="91dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/message_title"
+        android:hint="Message Title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -22,46 +22,43 @@
         android:id="@+id/start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_start_date"
-        android:layout_marginRight="26dp"
-        android:layout_marginEnd="26dp"
+        android:text="Set Start Date"
         android:onClick="start_date_click"
+        android:layout_marginBottom="38dp"
+        android:focusable="false"
         android:layout_above="@+id/cancelnewmessage"
-        android:layout_toLeftOf="@+id/end_date"
-        android:layout_toStartOf="@+id/end_date"
-        android:layout_marginBottom="13dp"
-        android:focusable="false"/>
+        android:layout_alignRight="@+id/cancelnewmessage"
+        android:layout_alignEnd="@+id/cancelnewmessage" />
 
     <Button
         android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/set_end_date"
-        android:layout_above="@+id/createnewmessage"
+        android:text="Set End Date"
+        android:layout_marginRight="13dp"
+        android:layout_marginEnd="13dp"
         android:layout_alignBaseline="@+id/start_date"
         android:layout_alignBottom="@+id/start_date"
-        android:layout_alignLeft="@+id/createnewmessage"
-        android:layout_alignStart="@+id/createnewmessage" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:id="@+id/createnewmessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create"
+        android:text="Create"
         android:layout_alignBaseline="@+id/cancelnewmessage"
         android:layout_alignBottom="@+id/cancelnewmessage"
-        android:layout_toRightOf="@+id/cancelnewmessage"
-        android:layout_toEndOf="@+id/cancelnewmessage"
-        android:layout_marginLeft="55dp"
-        android:layout_marginStart="55dp" />
+        android:layout_alignRight="@+id/message_title"
+        android:layout_alignEnd="@+id/message_title" />
 
     <Button
         android:id="@+id/cancelnewmessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
+        android:text="Cancel"
         android:onClick="cancel_click"
-        android:layout_marginBottom="17dp"
+        android:layout_marginBottom="18dp"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/message_title"
         android:layout_alignStart="@+id/message_title" />
@@ -70,11 +67,45 @@
         android:id="@+id/text_start_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="data inicial"
         android:layout_above="@+id/start_date"
         android:layout_alignLeft="@+id/start_date"
-        android:layout_alignStart="@+id/start_date"
-        android:layout_marginBottom="21dp"
-        android:text="@string/initial_date" />
+        android:layout_alignStart="@+id/start_date" />
+
+    <TextView
+        android:id="@+id/text_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="data final"
+        android:layout_above="@+id/end_date"
+        android:layout_alignLeft="@+id/end_date"
+        android:layout_alignStart="@+id/end_date" />
+
+    <Spinner
+        android:id="@+id/location_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="25dp" />
+
+    <EditText
+        android:id="@+id/messageContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/end_date"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/end_date"
+        android:layout_below="@+id/message_title"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:background="@drawable/border"
+        android:inputType="text|textMultiLine|textCapSentences"
+        android:hint="Write your message" />
 
 
 </RelativeLayout>

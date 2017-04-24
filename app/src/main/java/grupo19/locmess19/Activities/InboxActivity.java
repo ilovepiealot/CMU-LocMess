@@ -3,6 +3,7 @@ package grupo19.locmess19.Activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -11,6 +12,8 @@ import java.sql.Array;
 import java.util.ArrayList;
 
 import grupo19.locmess19.R;
+
+import static grupo19.locmess19.R.id.parent;
 
 /**
  * Created by super on 10/04/2017.
