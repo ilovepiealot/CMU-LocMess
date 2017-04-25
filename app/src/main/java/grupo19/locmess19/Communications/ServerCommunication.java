@@ -26,7 +26,7 @@ public class ServerCommunication {
     }
 
     //private boolean registed;
-    private boolean logged = false;
+    public boolean logged = false;
 
     public boolean login(final String username, final String password) {
 
@@ -47,8 +47,9 @@ public class ServerCommunication {
 
                         oos.writeObject("Login:" + username + ":" + password);
                         //blocks
-
-                        logged = (boolean) ois.readObject();
+                        // String a = (String) ois.readObject();
+                        logged = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(logged));
 
                         oos.writeObject("quit");
 
@@ -64,7 +65,7 @@ public class ServerCommunication {
             //waits for result
             t.join();
 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException e) {;
             e.printStackTrace();
         }
 

@@ -52,7 +52,7 @@ public class Server implements Runnable {
             // User Input 
             Scanner sc = new Scanner(ss.getInputStream()).useDelimiter("\n"); 
 			// Output to Client
-			oos.writeObject("entrou");
+			// oos.writeObject("entrou");
 			
 			File infile = new File("users.txt");
 			Scanner input = new Scanner(infile);
@@ -82,8 +82,7 @@ public class Server implements Runnable {
 				
 					}
 					System.out.println("logged: " + logged);
-					//oos.writeObject(logged);
-					oos.writeBoolean(logged);
+					oos.writeObject(logged);
 
 					break;
 				case "register":
