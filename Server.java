@@ -35,6 +35,7 @@ public class Server implements Runnable {
 		String[] arr;
 		String[] vs = null;
 		boolean logged = false;
+		boolean registered = true;
 		String line = "";
 		String username;
 		String password;
@@ -78,8 +79,7 @@ public class Server implements Runnable {
 							logged = true;
 							break;
 						}
-						
-				
+									
 					}
 					System.out.println("logged: " + logged);
 					oos.writeObject(logged);
@@ -87,6 +87,31 @@ public class Server implements Runnable {
 					break;
 				case "register":
 				
+					username = vs[1];
+					password = vs[2];
+					PrintWriter writer; 
+					
+					while (input.hasNext()) {
+						wholeLine = input.nextLine();
+						arr = wholeLine.split("\\s+");
+						if (username.equals(arr[0])){
+							registered = false;
+							break;
+						}
+									
+					}
+					if (registered){
+						try {
+							writer = new PrintWriter(new FileWriter(infile, true));
+							writer.println(username + " " + password);
+							writer.close();
+						} catch (IOException e) {
+							System.out.println(e);
+						}
+					}
+					
+					System.out.println("registered: " + registered);
+					oos.writeObject(registered);
 					
 					break;
 				case "update":

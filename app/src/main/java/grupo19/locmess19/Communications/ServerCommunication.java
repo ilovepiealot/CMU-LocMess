@@ -25,7 +25,7 @@ public class ServerCommunication {
 
     }
 
-    //private boolean registed;
+    public boolean registered = false;
     public boolean logged = false;
 
     public boolean login(final String username, final String password) {
@@ -70,6 +70,50 @@ public class ServerCommunication {
         }
 
         return logged;
+    }
+
+    public boolean register(final String username, final String password) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("Register:" + username + ":" + password);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        registered = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(registered));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {;
+            e.printStackTrace();
+        }
+
+        return registered;
     }
 
     private Object[] createCommunication(Socket s) {
