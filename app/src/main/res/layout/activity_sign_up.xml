@@ -23,12 +23,12 @@
         android:id="@+id/newpassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/Location_Name"
-        android:layout_alignRight="@+id/Location_Name"
-        android:layout_centerVertical="true"
         android:ems="10"
         android:inputType="textPassword"
-        android:hint="@string/enter_password"/>
+        android:hint="@string/enter_password"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/newusername"
+        android:layout_alignStart="@+id/newusername" />
 
     <Button
         android:id="@+id/newregister"

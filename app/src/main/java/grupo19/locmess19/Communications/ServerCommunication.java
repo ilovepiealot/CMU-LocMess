@@ -89,7 +89,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("Register:" + username + ":" + password);
+                        oos.writeObject("register:" + username + ":" + password);
                         //blocks
                         // String a = (String) ois.readObject();
                         registered = (String.valueOf(ois.readObject())).equals("true");

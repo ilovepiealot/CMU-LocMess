@@ -34,12 +34,10 @@ public class SignUpActivity extends AppCompatActivity {
         String password = ((EditText) findViewById(R.id.newpassword)).getText().toString();
 
         if (server.register(username, password)) {
-            startActivity(new Intent(SignUpActivity.this, MessagesActivity.class));
+            startActivity(new Intent(SignUpActivity.this, MainActivity.class));
         } else {
-            Toast.makeText(SignUpActivity.this, "Failed to register user.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "User already exists.", Toast.LENGTH_SHORT).show();
         }
-
-        startActivity(new Intent(SignUpActivity.this, MessagesActivity.class)); //change register transition to main menu (messages?)
     }
     public void backtologin_click(View v){
         startActivity(new Intent(SignUpActivity.this, MainActivity.class));

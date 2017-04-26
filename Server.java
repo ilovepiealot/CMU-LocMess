@@ -100,10 +100,10 @@ public class Server implements Runnable {
 						}
 									
 					}
-					if (registered){
+					if (registered && username != null && password != null){
 						try {
 							writer = new PrintWriter(new FileWriter(infile, true));
-							writer.println(username + " " + password);
+							writer.println("\n" + username + " " + password);
 							writer.close();
 						} catch (IOException e) {
 							System.out.println(e);
