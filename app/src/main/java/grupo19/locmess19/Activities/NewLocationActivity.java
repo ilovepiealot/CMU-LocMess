@@ -37,22 +37,15 @@ import java.util.Date;
 
 public class NewLocationActivity extends AppCompatActivity implements ConnectionCallbacks, OnConnectionFailedListener, LocationListener {
 
-    protected static final String TAG = "MainActivity";
+    protected static final String TAG = "NewLocationActivity";
 
-    /**
-     * Constant used in the location settings dialog.
-     */
+    // Constant used in the location settings dialog.
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
 
-    /**
-     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-     */
-    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    // The desired interval for location updates. Inexact. Updates may be more or less frequent.
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
-    /**
-     * The fastest rate for active location updates. Exact. Updates will never be more frequent
-     * than this value.
-     */
+    // The fastest rate for active location updates. Exact. Updates will never be more frequent than this value.
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
@@ -63,39 +56,26 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
 
     private GoogleApiClient mGoogleApiClient;
 
-    /**
-     * Stores parameters for requests to the FusedLocationProviderApi.
-     */
+    // Stores parameters for requests to the FusedLocationProviderApi.
     protected LocationRequest mLocationRequest;
 
-    /**
-     * Stores the types of location services the client is interested in using. Used for checking
-     * settings to determine if the device has optimal location settings.
-     */
+    // Stores the types of location services the client is interested in using. Used for checking
+    // settings to determine if the device has optimal location settings.
     protected LocationSettingsRequest mLocationSettingsRequest;
 
-    /**
-     * Represents a geographical location.
-     */
+    // Represents a geographical location.
     protected Location mCurrentLocation;
-
 
     protected String mLatitudeLabel;
     protected String mLongitudeLabel;
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
 
-    /**
-     * Tracks the status of the location updates request. Value changes when the user presses the
-     * Start Updates and Stop Updates buttons.
-     */
+    // Tracks the status of the location updates request.
     protected Boolean mRequestingLocationUpdates;
 
-    /**
-     * Time when the location was updated represented as a String.
-     */
+    // Time when the location was updated represented as a String.
     protected String mLastUpdateTime;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +88,6 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
 
-
         // Update values using data stored in the Bundle.
         updateValuesFromBundle(savedInstanceState);
 
@@ -119,11 +98,6 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         buildLocationSettingsRequest();
     }
 
-    /**
-     * Updates fields based on data stored in the bundle.
-     *
-     * @param savedInstanceState The activity state saved in the Bundle.
-     */
     private void updateValuesFromBundle(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             // Update the value of mRequestingLocationUpdates from the Bundle, and make sure that
@@ -149,9 +123,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         }
     }
 
-    /**
-     * Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
-     */
+    // Builds a GoogleApiClient. Uses the addApi() method to request the LocationServices API.
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -160,19 +132,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
                 .build();
     }
 
-    /**
-     * Sets up the location request. Android has two location request settings:
-     * {@code ACCESS_COARSE_LOCATION} and {@code ACCESS_FINE_LOCATION}. These settings control
-     * the accuracy of the current location. This sample uses ACCESS_FINE_LOCATION, as defined in
-     * the AndroidManifest.xml.
-     * <p/>
-     * When the ACCESS_FINE_LOCATION setting is specified, combined with a fast update
-     * interval (5 seconds), the Fused Location Provider API returns location updates that are
-     * accurate to within a few feet.
-     * <p/>
-     * These settings are appropriate for mapping applications that show real-time location
-     * updates.
-     */
+    // Sets up the location request.
     protected void createLocationRequest() {
         mLocationRequest = new LocationRequest();
 
@@ -189,26 +149,11 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    /**
-     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
-     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
-     * if a device has the needed location settings.
-     */
     protected void buildLocationSettingsRequest() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
         builder.addLocationRequest(mLocationRequest);
         mLocationSettingsRequest = builder.build();
     }
-
-    /**
-     * The callback invoked when
-     * {@link com.google.android.gms.location.SettingsApi#checkLocationSettings(GoogleApiClient,
-     * LocationSettingsRequest)} is called. Examines the
-     * {@link com.google.android.gms.location.LocationSettingsResult} object and determines if
-     * location settings are adequate. If they are not, begins the process of presenting a location
-     * settings dialog to the user.
-     */
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -218,7 +163,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         Log.i(TAG, "User agreed to make required location settings changes.");
-                        // Nothing to do. startLocationupdates() gets called in onResume again.
+                        // Nothing to do. startLocationUpdates() gets called in onResume again.
                         break;
                     case Activity.RESULT_CANCELED:
                         Log.i(TAG, "User chose not to make required location settings changes.");
@@ -230,14 +175,21 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         }
     }
 
-    /**
-     * Requests location updates from the FusedLocationApi.
-     */
+    // Handles the Start Updates button and requests start of location updates. Does nothing if
+    // updates have already been requested.
+    public void startUpdatesButtonHandler(View view) {
+        if (!mRequestingLocationUpdates) {
+            mRequestingLocationUpdates = true;
+            startLocationUpdates();
+        } else {
+            mRequestingLocationUpdates = false;
+            stopLocationUpdates();
+        }
+    }
+
+    // Requests location updates from the FusedLocationApi.
     protected void startLocationUpdates() {
-        LocationServices.SettingsApi.checkLocationSettings(
-                mGoogleApiClient,
-                mLocationSettingsRequest
-        ).setResultCallback(new ResultCallback<LocationSettingsResult>() {
+        LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, mLocationSettingsRequest).setResultCallback(new ResultCallback<LocationSettingsResult>() {
             @Override
             public void onResult(LocationSettingsResult locationSettingsResult) {
                 final Status status = locationSettingsResult.getStatus();
@@ -247,12 +199,10 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
                         if (ActivityCompat.checkSelfPermission(NewLocationActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(NewLocationActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             return;
                         }
-                        LocationServices.FusedLocationApi.requestLocationUpdates(
-                                mGoogleApiClient, mLocationRequest, NewLocationActivity.this);
+                        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, NewLocationActivity.this);
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                "location settings ");
+                        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " + "location settings ");
                         try {
                             // Show the dialog by calling startResolutionForResult(), and check the
                             // result in onActivityResult().
@@ -262,8 +212,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        String errorMessage = "Location settings are inadequate, and cannot be " +
-                                "fixed here. Fix in Settings.";
+                        String errorMessage = "Location settings are inadequate, and cannot be " + "fixed here. Fix in Settings.";
                         Log.e(TAG, errorMessage);
                         Toast.makeText(NewLocationActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         mRequestingLocationUpdates = false;
@@ -274,36 +223,26 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
 
     }
 
-    /**
-     * Updates all UI fields.
-     */
+    // Updates all UI fields.
     private void updateUI() {
+
         updateLocationUI();
     }
 
-    /**
-     * Sets the value of the UI fields for the location latitude, longitude and last update time.
-     */
+    // Sets the value of the UI fields for the location latitude, longitude and last update time.
     private void updateLocationUI() {
         if (mCurrentLocation != null) {
-            mLatitudeText.setText(String.format("%s: %f", mLatitudeLabel,
-                    mCurrentLocation.getLatitude()));
-            mLongitudeText.setText(String.format("%s: %f", mLongitudeLabel,
-                    mCurrentLocation.getLongitude()));
+            mLatitudeText.setText(String.format("%s: %f", mLatitudeLabel, mCurrentLocation.getLatitude()));
+            mLongitudeText.setText(String.format("%s: %f", mLongitudeLabel, mCurrentLocation.getLongitude()));
         }
     }
 
-    /**
-     * Removes location updates from the FusedLocationApi.
-     */
+    // Removes location updates from the FusedLocationApi.
     protected void stopLocationUpdates() {
         // It is a good practice to remove location requests when the activity is in a paused or
         // stopped state. Doing so helps battery performance and is especially
         // recommended in applications that request frequent location updates.
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient,
-                this
-        ).setResultCallback(new ResultCallback<Status>() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {
                 mRequestingLocationUpdates = false;
@@ -357,9 +296,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
 
     }
 
-    /**
-     * Runs when a GoogleApiClient object successfully connects.
-     */
+    // Runs when a GoogleApiClient object successfully connects.
     @Override
     public void onConnected(Bundle connectionHint) {
         // If the initial location was never previously requested, we use
@@ -387,9 +324,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
 
     }
 
-    /**
-     * Callback that fires when the location changes.
-     */
+    // Callback that fires when the location changes.
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
@@ -409,9 +344,7 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         Log.i(TAG, "Connection failed: ConnectionResult.getErrorCode() = " + result.getErrorCode());
     }
 
-    /**
-     * Stores activity data in the Bundle.
-     */
+    // Stores activity data in the Bundle.
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(KEY_REQUESTING_LOCATION_UPDATES, mRequestingLocationUpdates);
         savedInstanceState.putParcelable(KEY_LOCATION, mCurrentLocation);
