@@ -50,7 +50,8 @@
         android:layout_alignBaseline="@+id/cancelnewmessage"
         android:layout_alignBottom="@+id/cancelnewmessage"
         android:layout_alignRight="@+id/message_title"
-        android:layout_alignEnd="@+id/message_title" />
+        android:layout_alignEnd="@+id/message_title"
+        android:onClick="createnewmesssage"/>
 
     <Button
         android:id="@+id/cancelnewmessage"

@@ -34,13 +34,20 @@ public class Server implements Runnable {
 
 		String[] arr;
 		String[] vs = null;
+		String[] mes = null;
 		boolean logged = false;
 		boolean registered = true;
+		boolean created = true;
+		boolean viewed = true;
 		String line = "";
 		String username;
 		String password;
 		String wholeLine;
 		
+		String messageTitle;
+		String messageContent;
+		String messageStartDate;
+		String messageEndDate;
 		
 		
         try {
@@ -57,6 +64,9 @@ public class Server implements Runnable {
 			
 			File infile = new File("users.txt");
 			Scanner input = new Scanner(infile);
+			
+			File infile2 = new File("messages.txt");
+			Scanner input2 = new Scanner(infile2);
 			
 			while (!(line = (String) ois.readObject()).equals("quit")) {
 				System.out.println("line = " + line);
@@ -116,6 +126,28 @@ public class Server implements Runnable {
 					break;
 				case "update":
 
+					break;
+					
+				case "createnewmessage" :
+				
+					mes = line.split("#YOLO#");
+					messageTitle = mes[1];
+					messageContent = mes[2];
+					messageStartDate = mes[3];
+					messageEndDate = mes[4];
+					PrintWriter writer2;
+					try {
+							writer2 = new PrintWriter(new FileWriter(infile2, true));
+							writer2.println("\n" + messageTitle + "#YOLO#" + messageContent + "#YOLO#" + messageStartDate + "#YOLO#" + messageEndDate);
+							writer2.close();
+						} catch (IOException e) {
+							System.out.println(e);
+						}
+					System.out.println("created: " + created);
+					oos.writeObject(created);
+					
+				case "getTitles" :
+					oos.writeObject(viewed);
 					break;
 				}
 			}

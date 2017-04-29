@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import grupo19.locmess19.Activities.MessagesActivity;
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
 import static grupo19.locmess19.R.id.start_date;
@@ -39,6 +40,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private TextView text_end;
     private Button btn_date;
     private Button btn_date_end;
+    private Button createnewmessage;
+
+    private ServerCommunication server;
 
 
     @Override
@@ -55,6 +59,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         btn_date = (Button) findViewById(R.id.start_date);
         text_end = (TextView) findViewById(R.id.text_end_date);
         btn_date_end = (Button) findViewById(R.id.end_date);
+        createnewmessage = (Button) findViewById(R.id.createnewmessage);
+
+
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,8 +74,16 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
                 updateDateEnd();
             }
         });
+        createnewmessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createnewmessage(v);
+            }
+        });
 
         updateLabel();
+
+        server = new ServerCommunication("10.0.2.2", 11113);
     }
     private void updateLabel(){
         text.setText(formatDateTime.format(date.getTime()));
@@ -118,6 +133,20 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    public void createnewmessage(View v){
+
+        String message_title = ((TextView) findViewById(R.id.message_title)).getText().toString();
+        String messageContent = ((TextView) findViewById(R.id.messageContent)).getText().toString();
+        String start_date = ((TextView) findViewById(R.id.text_start_date)).getText().toString();
+        String end_date = ((TextView) findViewById(R.id.text_end_date)).getText().toString();
+
+        if (server.createNewMessage(message_title, messageContent, start_date, end_date )) {
+            startActivity(new Intent(NewMessageActivity.this, InboxActivity.class));
+        } else {
+            Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
