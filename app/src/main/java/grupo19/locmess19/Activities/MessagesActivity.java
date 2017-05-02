@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import grupo19.locmess19.Fragments.Locations;
 import grupo19.locmess19.Fragments.MessagesMenu;
+import grupo19.locmess19.Fragments.ProfilesFragment;
 import grupo19.locmess19.R;
 
 public class MessagesActivity extends AppCompatActivity {
@@ -147,8 +148,8 @@ public class MessagesActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             switch (position) {
                 case 0:
-                    // Games fragment activity
-                    // return Locations.newInstance();
+                    ProfilesFragment profilesFragment = new ProfilesFragment();
+                    return profilesFragment;
                 case 1:
                     // Games fragment activity
                     MessagesMenu whatthefuck = new MessagesMenu();

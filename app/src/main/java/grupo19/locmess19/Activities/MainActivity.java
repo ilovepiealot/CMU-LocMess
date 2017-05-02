@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity  {
         String username = ((EditText) findViewById(R.id.username)).getText().toString();
         String password = ((EditText) findViewById(R.id.password)).getText().toString();
 
-        if (server.login(username, password)) {
+//        if (server.login(username, password)) {
              startActivity(new Intent(MainActivity.this, MessagesActivity.class));
-        } else {
-            Toast.makeText(MainActivity.this, "Failed to login.", Toast.LENGTH_SHORT).show();
-        }
+//        } else {
+//            Toast.makeText(MainActivity.this, "Failed to login.", Toast.LENGTH_SHORT).show();
+//        }
     }
 }

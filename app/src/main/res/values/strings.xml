@@ -40,6 +40,13 @@
     <!-- Profile Menus -->
     <string name="enter_name">Enter Name</string>
     <string name="enter_password">Enter Password</string>
+    <string name="user_info">User Info</string>
+    <string name="user_keys">User Keys</string>
+    <string name="add_key">Add New Key</string>
+    <string name="new_key">New Key</string>
+    <string name="new_value">New Value</string>
+
+
 
 
     <!-- Buttons Texts -->

@@ -24,6 +24,7 @@
         <activity android:name=".Activities.NewMessageActivity" />
         <activity android:name=".Activities.InboxActivity" />
         <activity android:name=".Activities.OutboxActivity" />
+
         <activity
             android:name=".Activities.MessagesActivity"
             android:label="@string/messages"
