@@ -1,6 +1,8 @@
 package grupo19.locmess19.Activities;
 //import grupo19.locmess19.frag
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +42,8 @@ public class MessagesActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private String username;
+    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,10 @@ public class MessagesActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         }); */
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        username = sharedPreferences.getString("loggedUser", "");
+        password = sharedPreferences.getString("userPassword", "");
 
     }
 
@@ -149,6 +157,10 @@ public class MessagesActivity extends AppCompatActivity {
             switch (position) {
                 case 0:
                     ProfilesFragment profilesFragment = new ProfilesFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("username", username);
+                    bundle.putString("password", password);
+                    profilesFragment.setArguments(bundle);
                     return profilesFragment;
                 case 1:
                     // Games fragment activity

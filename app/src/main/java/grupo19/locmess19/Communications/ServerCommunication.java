@@ -22,7 +22,6 @@ public class ServerCommunication {
     public ServerCommunication(String ip, int port) {
         this.ip = ip;
         this.port = port;
-
     }
 
     public boolean registered = false;

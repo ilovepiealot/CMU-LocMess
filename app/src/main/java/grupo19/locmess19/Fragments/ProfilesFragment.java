@@ -3,7 +3,9 @@ package grupo19.locmess19.Fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,6 +32,10 @@ import grupo19.locmess19.R;
 public class ProfilesFragment extends Fragment {
 
     private ListView keyList;
+    private EditText editUsername;
+    private EditText editPassword;
+    private String username;
+    private String password;
     List<KeyValuePair> keyValueItems;
 
     public static ProfilesFragment newInstance() {
@@ -43,6 +49,15 @@ public class ProfilesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        username = getArguments().getString("username", "");
+        password = getArguments().getString("password", "");
+
+        editUsername = (EditText) v.findViewById(R.id.editUsername);
+        editPassword = (EditText) v.findViewById(R.id.editPassword);
+
+        editUsername.setText(username);
+        editPassword.setText(password);
 
         keyList = (ListView) v.findViewById(R.id.keys_preview_list);
 
