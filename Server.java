@@ -206,6 +206,25 @@ public class Server implements Runnable {
 						System.out.println(time() + "Get all available locations from the server\n");
 						oos.writeObject(locationList);
 						break;
+					case "getlocationdetails":
+						String locDetailsName = vs[1];
+						locationsFile = new File("files/locations.txt");
+						locationsFileScanner = new Scanner(locationsFile);
+						String[] locDetails = new String[4];
+						while (locationsFileScanner.hasNext()) {
+							wholeLine = locationsFileScanner.nextLine();
+							arr = wholeLine.split(SEPARATOR);
+							if (arr[0].equals(locDetailsName)) {
+								locDetails[0] = locDetailsName;
+								locDetails[1] = arr[1];
+								locDetails[2] = arr[2];
+								locDetails[3] = arr[3];
+							}
+						}
+						locationsFileScanner.close();
+						System.out.println(time() + "Location details: + " + locDetailsName + "\n");
+						oos.writeObject(locDetails);
+						break;
 					case "savenewlocation":
 						String[] locval = vs[1].split(SEPARATOR);
 						String locName = locval[0];

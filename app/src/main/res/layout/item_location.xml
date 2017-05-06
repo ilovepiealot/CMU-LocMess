@@ -15,12 +15,22 @@
 
     <Button
         android:id="@+id/delete_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/delete"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:text="X"
         android:layout_alignBaseline="@+id/locationRow"
         android:layout_alignBottom="@+id/locationRow"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/details_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/details"
+        android:layout_alignBaseline="@+id/delete_btn"
+        android:layout_alignBottom="@+id/delete_btn"
+        android:layout_toLeftOf="@+id/delete_btn"
+        android:layout_toStartOf="@+id/delete_btn" />
 
 </RelativeLayout>

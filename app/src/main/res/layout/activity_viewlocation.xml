@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundcolor"
+    tools:context="grupo19.locmess19.Activities.ViewLocationActivity">
+
+    <TextView
+        android:id="@+id/location_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/backtologin"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/backtologin"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:hint="@string/location_name" />
+
+    <TextView
+        android:id="@+id/latitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/latitude"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/location_name"
+        android:layout_alignLeft="@+id/location_name"
+        android:layout_alignStart="@+id/location_name" />
+
+    <TextView
+        android:id="@+id/longitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/longitude"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/latitude"
+        android:layout_alignLeft="@+id/latitude"
+        android:layout_alignStart="@+id/latitude" />
+
+    <TextView
+        android:id="@+id/radius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/radius"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/longitude"
+        android:layout_alignLeft="@+id/longitude"
+        android:layout_alignStart="@+id/longitude" />
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/location_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_location"
+        android:layout_marginTop="39dp"
+        android:layout_centerHorizontal="true"/>
+
+
+
+    <Button
+        android:id="@+id/save_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:text="@string/save_location"
+        android:layout_below="@+id/radius"
+        android:layout_centerHorizontal="true"
+        android:onClick="saveLocation"/>
+
+</RelativeLayout>
