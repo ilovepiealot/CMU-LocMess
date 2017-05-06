@@ -27,6 +27,7 @@ public class ServerCommunication {
     private boolean getted = false;
 
     private ArrayList<SimpleEntry<String,String>> userKeys = null;
+    private ArrayList<String[]> locationList = null;
 
 
     public ServerCommunication(String ip, int port) {
@@ -280,6 +281,128 @@ public class ServerCommunication {
         }
 
         return userKeys;
+    }
+
+    public ArrayList<String[]> getExistingLocations() {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+                        oos.writeObject("getexistinglocations");
+
+                        locationList = (ArrayList<String[]>) ois.readObject();
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return locationList;
+    }
+
+    public boolean saveNewLocation(final String locName, final String locLatitude, final String locLongitude, final String locRadius) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("savenewlocation:" + locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
+
+    public boolean deleteLocation(final String locName) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("deletelocation:" + locName);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
     }
 
 

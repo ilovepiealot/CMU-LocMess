@@ -10,6 +10,7 @@
     <string name="longitude">Longitude</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="radius">Radius</string>
 
     <!-- Menus Names -->
     <string name="profile">Profile</string>
