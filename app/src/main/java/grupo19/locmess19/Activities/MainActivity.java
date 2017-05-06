@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity  {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("loggedUser", params[0].username);
-                editor.putString("userPassword", params[0].password);
+                editor.putString("userPassword", params[0].username);
                 editor.commit();
 
                 return "Success";

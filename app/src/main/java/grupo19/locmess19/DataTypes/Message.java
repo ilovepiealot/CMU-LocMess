@@ -3,6 +3,7 @@ package grupo19.locmess19.DataTypes;
 
 import android.location.Location;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -10,15 +11,15 @@ public class Message {
 
     private Location location;
     private User user;
-    private ArrayList<KeyValuePair> whiteList;
-    private ArrayList<KeyValuePair> blackList;
+    private ArrayList<SimpleEntry<String,String>> whiteList;
+    private ArrayList<SimpleEntry<String,String>> blackList;
     private Date validity;
 
     public Message(Location location, User user, Date validity) {
         this.location = location;
         this.user = user;
-        this.whiteList = new ArrayList<KeyValuePair>();
-        this.blackList = new ArrayList<KeyValuePair>();
+        this.whiteList = new ArrayList<SimpleEntry<String,String>>();
+        this.blackList = new ArrayList<SimpleEntry<String,String>>();
         this.validity = validity;
     }
 
@@ -38,19 +39,19 @@ public class Message {
         this.user = user;
     }
 
-    public ArrayList<KeyValuePair> getWhiteList() {
+    public ArrayList<SimpleEntry<String,String>> getWhiteList() {
         return whiteList;
     }
 
-    public void addToWhiteList(KeyValuePair whiteListItem) {
+    public void addToWhiteList(SimpleEntry<String,String> whiteListItem) {
         this.whiteList.add(whiteListItem);
     }
 
-    public ArrayList<KeyValuePair> getBlackList() {
+    public ArrayList<SimpleEntry<String,String>> getBlackList() {
         return blackList;
     }
 
-    public void addToBlackList(KeyValuePair blacklistItem) {
+    public void addToBlackList(SimpleEntry<String,String> blacklistItem) {
         this.blackList.add(blacklistItem);
     }
 

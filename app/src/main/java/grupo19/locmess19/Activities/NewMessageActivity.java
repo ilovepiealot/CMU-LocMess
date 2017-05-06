@@ -83,6 +83,8 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
         updateLabel();
 
+
+
         server = new ServerCommunication("10.0.2.2", 11113);
     }
     private void updateLabel(){

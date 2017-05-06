@@ -7,17 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import java.util.AbstractMap.SimpleEntry;
+
 
 import java.util.List;
 
-import grupo19.locmess19.DataTypes.KeyValuePair;
 import grupo19.locmess19.R;
 
-public class KeyValueListAdapter extends ArrayAdapter<KeyValuePair> {
+public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>> {
 
     Context context;
 
-    public KeyValueListAdapter(Context context, int resourceId, List<KeyValuePair> items) {
+    public KeyValueListAdapter(Context context, int resourceId, List<SimpleEntry<String,String>> items) {
         super(context, resourceId, items);
         this.context = context;
     }
@@ -30,7 +31,7 @@ public class KeyValueListAdapter extends ArrayAdapter<KeyValuePair> {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        KeyValuePair kv = getItem(position);
+        SimpleEntry<String,String> kv = getItem(position);
 
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if (convertView == null) {

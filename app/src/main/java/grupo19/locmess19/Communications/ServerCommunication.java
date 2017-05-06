@@ -7,32 +7,32 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+
 
 import static android.content.ContentValues.TAG;
 
-/**
- * Created by super on 24/04/2017.
- */
 
 public class ServerCommunication {
 
+    public static final String SEPARATOR = "#YOLO#";
+
     private String ip;
     private int port;
+
+    private boolean registered = false;
+    private boolean logged = false;
+    private boolean created = false;
+    private boolean getted = false;
+
+    private ArrayList<SimpleEntry<String,String>> userKeys = null;
+
 
     public ServerCommunication(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
-
-    public boolean registered = false;
-    public boolean logged = false;
-    public boolean created = false;
-    public boolean getted = false;
-    public String message_title;
-    public String message_content;
-    public String start_date;
-    public String end_date;
-
 
     public boolean login(final String username, final String password) {
 
@@ -51,7 +51,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("Login:" + username + ":" + password);
+                        oos.writeObject("login:" + username + ":" + password);
                         //blocks
                         // String a = (String) ois.readObject();
                         logged = (String.valueOf(ois.readObject())).equals("true");
@@ -59,9 +59,7 @@ public class ServerCommunication {
 
                         oos.writeObject("quit");
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
@@ -103,9 +101,7 @@ public class ServerCommunication {
 
                         oos.writeObject("quit");
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
@@ -115,7 +111,7 @@ public class ServerCommunication {
             //waits for result
             t.join();
 
-        } catch (InterruptedException e) {;
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -139,7 +135,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("createnewmessage:" + "#YOLO#" + message_title + "#YOLO#" + messageContent + "#YOLO#" + startdate + "#YOLO#" + enddate);
+                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -147,9 +143,7 @@ public class ServerCommunication {
 
                         oos.writeObject("quit");
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
@@ -159,7 +153,7 @@ public class ServerCommunication {
             //waits for result
             t.join();
 
-        } catch (InterruptedException e) {;
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -191,9 +185,7 @@ public class ServerCommunication {
 
                         oos.writeObject("quit");
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
@@ -208,6 +200,86 @@ public class ServerCommunication {
         }
 
         return getted;
+    }
+
+    public boolean saveNewKey(final String username, final String key, final String value) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("savenewkey:" + username + SEPARATOR + key + SEPARATOR + value);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
+
+    public ArrayList<SimpleEntry<String, String>> getUserKeys(final String username) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+                        oos.writeObject("getuserkeys:" + username);
+
+                        userKeys = (ArrayList<SimpleEntry<String, String>>) ois.readObject();
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return userKeys;
     }
 
 

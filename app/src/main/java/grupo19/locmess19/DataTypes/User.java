@@ -1,6 +1,7 @@
 package grupo19.locmess19.DataTypes;
 
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 public class User {
@@ -9,7 +10,7 @@ public class User {
     private String password;
     private ArrayList<Message> inbox;
     private ArrayList<Message> outbox;
-    private ArrayList<KeyValuePair> keys;
+    private ArrayList<SimpleEntry<String,String>> keys;
 
 
     public User(String name, String password) {
@@ -17,7 +18,7 @@ public class User {
         this.password = password;
         inbox = new ArrayList<Message>();
         outbox = new ArrayList<Message>();
-        keys = new ArrayList<KeyValuePair>();
+        keys = new ArrayList<SimpleEntry<String,String>>();
     }
 
 
@@ -53,11 +54,11 @@ public class User {
         this.inbox.add(outboxItem);
     }
 
-    public ArrayList<KeyValuePair> getKeys() {
+    public ArrayList<SimpleEntry<String,String>> getKeys() {
         return keys;
     }
 
-    public void addKey(KeyValuePair key) {
+    public void addKey(SimpleEntry<String,String> key) {
         this.keys.add(key);
     }
 }

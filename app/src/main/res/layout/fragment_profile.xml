@@ -44,6 +44,21 @@
 
     </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end">
+
+            <Button
+                android:id="@+id/apply_profile_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:ems="6"
+                android:enabled="false"
+                android:text="@string/apply_changes"/>
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,12 +73,14 @@
             android:layout_width="315dp"
             android:layout_height="200dp"/>
 
-        <Button
-            android:id="@+id/add_key_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="7"
-            android:text="@string/add_key" />
+            <Button
+                android:id="@+id/add_key_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="8"
+                android:text="@string/add_key" />
+
+
 
     </LinearLayout>
 

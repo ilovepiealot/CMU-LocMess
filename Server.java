@@ -9,41 +9,41 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
+import java.util.ArrayList;
 
 
 public class Server implements Runnable {
 
     Socket ss;
-    PrintStream printer;
+
+	PrintStream printer;
     static PrintWriter writer;
-    Server(Socket csocket) {
-      this.ss = csocket;
-    }
+
 	static SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss:SSS");
+	static final String SEPARATOR = "#YOLO#";
 
-	static File infile = new File("files/users.txt");
+	static File usersFile = new File("files/users.txt");
+	static File keysFile = new File("files/keys.txt");
+	static File messagesFile = new File("files/messages.txt");
 
-	static File infile2 = new File("files/messages.txt");
+	Server(Socket csocket) {
+		this.ss = csocket;
+	}
 
-
-
-    public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {
 
         ServerSocket s1 = new ServerSocket(11113);
         System.out.println(time() + "Server is up! Listening...\n");
 
 		File theDir = new File("files");
-		if (!theDir.exists()) {
-			boolean result = theDir.mkdir();
-		}
+		if (!theDir.exists()) { boolean result = theDir.mkdir(); }  // Create files folder
 
-		if (!infile.exists()) {
-			infile.createNewFile();
-		}
+		if (!usersFile.exists()) { usersFile.createNewFile(); } // Create users.txt
 
-		if (!infile2.exists()) {
-			infile2.createNewFile();
-		}
+		if (!keysFile.exists()) { keysFile.createNewFile(); } // Create keys.txt
+
+		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt TODO: Maybe one messages file per user?
 
 		while(true) {
             Socket sss = s1.accept();
@@ -62,118 +62,142 @@ public class Server implements Runnable {
 		boolean created = true;
 		boolean viewed = true;
 		String line = "";
-		String username;
-		String password;
+		String username, password;
 		String wholeLine;
-		
-		String messageTitle;
-		String messageContent;
-		String messageStartDate;
-		String messageEndDate;
-		
+		String messageTitle, messageContent, messageStartDate, messageEndDate;
+
 		
         try {
 			
 			OutputStream os = ss.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
+
 			InputStream is = ss.getInputStream();
 			ObjectInputStream ois = new ObjectInputStream(is);
-			//System.out.println("criou oos");
-            // User Input 
-            Scanner sc = new Scanner(ss.getInputStream()).useDelimiter("\n"); 
-			// Output to Client
-			// oos.writeObject("entrou");
 
-			Scanner input = new Scanner(infile);
-			Scanner input2 = new Scanner(infile2);
-			
+            // User Input
+            Scanner sc = new Scanner(ss.getInputStream()).useDelimiter("\n");
+
+			// Output to Client
+			Scanner usersScanner = new Scanner(usersFile);
+			Scanner messagesScanner = new Scanner(messagesFile);
+			Scanner keysScanner = new Scanner(keysFile);
+
 			while (!(line = (String) ois.readObject()).equals("quit")) {
 				System.out.println(time() + "Received: \"" + line + "\"");
 				vs = line.split(":");
 
 				switch (vs[0]) {
-				case "Login":
+					case "login":
 
-					username = vs[1];
-					password = vs[2];
-					
-					 while (input.hasNext()) {
-						wholeLine = input.nextLine();
-						arr = wholeLine.split("\\s+");
-						String res = time() + username + ":" + password + " == " + arr[0] + ":" + arr[1] + " ? ";
-						if (username.equals(arr[0]) && password.equals(arr[1])){
-							logged = true;
-							System.out.println(res + "YES!");
-							break;
+						username = vs[1];
+						password = vs[2];
+						while (usersScanner.hasNext()) {
+							wholeLine = usersScanner.nextLine();
+							arr = wholeLine.split("\\s+");
+							String res = time() + username + ":" + password + " == " + arr[0] + ":" + arr[1] + " ? ";
+							if (username.equals(arr[0]) && password.equals(arr[1])) {
+								logged = true;
+								System.out.println(res + "YES!");
+								break;
+							} else
+								System.out.println(res + "NO!");
 						}
-						else
-							System.out.println(res + "NO!");
-					 }
-					System.out.println(time() + "User \""+ username + "\" logged in: " + logged + "\n");
-					oos.writeObject(logged);
-					break;
+						System.out.println(time() + "User \"" + username + "\" logged in: " + logged + "\n");
+						oos.writeObject(logged);
+						break;
 
-				case "register":
-					username = vs[1];
-					password = vs[2];
-					PrintWriter writer; 
-
-					while (input.hasNext()) {
-						wholeLine = input.nextLine();
-						arr = wholeLine.split("\\s+");
-						if (username.equals(arr[0])){
-							registered = false;
-							break;
+					case "register":
+						username = vs[1];
+						password = vs[2];
+						PrintWriter writer;
+						while (usersScanner.hasNext()) {
+							wholeLine = usersScanner.nextLine();
+							arr = wholeLine.split("\\s+");
+							if (username.equals(arr[0])) {
+								registered = false;
+								break;
+							}
 						}
+						if (registered && username != null && password != null) {
+							try {
+								writer = new PrintWriter(new FileWriter(usersFile, true));
+								writer.println(username + " " + password);
+								writer.close();
+							} catch (IOException e) {
+								System.out.println(e);
+							}
+						}
+						System.out.println(time() + "User \"" + username + "\" registered: " + registered + "\n");
+						oos.writeObject(registered);
+						break;
+					case "update":
+						break;
+					case "createnewmessage":
+						mes = line.split(SEPARATOR);
 
-					}
-					if (registered && username != null && password != null){
+						messageTitle = mes[1];
+						messageContent = mes[2];
+						messageStartDate = mes[3];
+						messageEndDate = mes[4];
+						PrintWriter messagesWriter;
 						try {
-							writer = new PrintWriter(new FileWriter(infile, true));
-							writer.println(username + " " + password);
-							writer.close();
+							messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
+							messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate);
+							messagesWriter.close();
 						} catch (IOException e) {
 							System.out.println(e);
 						}
-					}
-					
-					System.out.println(time() + "User \""+ username + "\" registered: " + registered + "\n");
-					oos.writeObject(registered);
-					
-					break;
-				case "update":
+						System.out.println("created: " + created);
+						oos.writeObject(created);
+						break;
+					case "getTitles":
+						oos.writeObject(viewed);
+						break;
+					case "savenewkey":
+						String[] keyval = vs[1].split(SEPARATOR);
+						username = keyval[0];
+						String key = keyval[1];
+						String value = keyval[2];
+						try {
+							File userKeysFile = new File("files/" + username + "_keys.txt");
+							if (!userKeysFile.exists()) {
+								userKeysFile.createNewFile();
+							}
+							PrintWriter keyValWriter = new PrintWriter(new FileWriter(keysFile, true));
+							keyValWriter.println(key + SEPARATOR + value);
+							keyValWriter.close();
 
-					break;
-					
-				case "createnewmessage" :
-				
-					mes = line.split("#YOLO#");
-					messageTitle = mes[1];
-					messageContent = mes[2];
-					messageStartDate = mes[3];
-					messageEndDate = mes[4];
-					PrintWriter writer2;
-					try {
-							writer2 = new PrintWriter(new FileWriter(infile2, true));
-							writer2.println("\n" + messageTitle + "#YOLO#" + messageContent + "#YOLO#" + messageStartDate + "#YOLO#" + messageEndDate);
-							writer2.close();
+							PrintWriter keyValUserWriter = new PrintWriter(new FileWriter(userKeysFile, true));
+							keyValUserWriter.println(key + SEPARATOR + value);
+							keyValUserWriter.close();
+
 						} catch (IOException e) {
 							System.out.println(e);
 						}
-					System.out.println("created: " + created);
-					oos.writeObject(created);
-					
-				case "getTitles" :
-					oos.writeObject(viewed);
-					break;
+						System.out.println(time() + "Created key <" + key + "," + value + "> in user " + username + "\n");
+						oos.writeObject(true);
+						break;
+
+					case "getuserkeys":
+						username = vs[1];
+						File usersKeyFile = new File("files/" + username + "_keys.txt");
+						Scanner userKeysScanner = new Scanner(usersKeyFile);
+						ArrayList<AbstractMap.SimpleEntry<String, String>> userKeys = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
+						while (userKeysScanner.hasNext()) {
+							wholeLine = userKeysScanner.nextLine();
+							arr = wholeLine.split(SEPARATOR);
+							userKeys.add(new AbstractMap.SimpleEntry<String,String>(arr[0],arr[1]));
+						}
+						userKeysScanner.close();
+						System.out.println(time() + "Get all keys from user " + username + "\n");
+						oos.writeObject(userKeys);
+						break;
 				}
 			}
-			
 		} catch (IOException | ClassNotFoundException e) {
             System.out.println(e);
         }
-		
-
 	}
 
 	public static String time(){
