@@ -30,18 +30,15 @@ import grupo19.locmess19.R;
 public class ProfilesFragment extends Fragment {
 
     private ListView keyList;
-    EditText editUsername, editPassword;
     Button applyBtn;
     private String username, password;
     private List<SimpleEntry<String,String>> keyValueItems;
     private ServerCommunication server;
 
-
     public static ProfilesFragment newInstance() {
-        ProfilesFragment fragment = new ProfilesFragment();
-        return fragment;
-    }
-    public ProfilesFragment(){
+        ProfilesFragment profilesFragment = new ProfilesFragment();
+        return profilesFragment;
+    }     public ProfilesFragment(){
 
     }
 
@@ -76,8 +73,9 @@ public class ProfilesFragment extends Fragment {
         editUsername.setText(username);
         editPassword.setText(password);
 
-        TextWatcher tw = new TextWatcher() {
+        keyList = (ListView) v.findViewById(R.id.keys_preview_list);
 
+        TextWatcher tw = new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {}
 
@@ -88,29 +86,22 @@ public class ProfilesFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!s.toString().equals(username) || !s.toString().equals(password)){
-                    applyBtn.setEnabled(true);          // TODO: check this better :(
+                    applyBtn.setEnabled(true);
+                }
+                else if(s.toString().equals(username) && s.toString().equals(password)){
+                    applyBtn.setEnabled(false);
                 }
             }
         };
 
         editUsername.addTextChangedListener(tw);
-
-
-        keyList = (ListView) v.findViewById(R.id.keys_preview_list);
-
+        editPassword.addTextChangedListener(tw);
         populateKeyList(v);
 
        return v;
     }
 
-
     public void populateKeyList(View v){
-
-//        keyValueItems = new ArrayList<SimpleEntry<String,String>>();
-//        for (int i = 0; i < 2; i++) {
-//            SimpleEntry<String,String> item = new SimpleEntry<String,String>("Key " + i, "Value " + i);
-//            keyValueItems.add(item);
-//        }
 
         keyValueItems = server.getUserKeys(username);
 
@@ -157,7 +148,7 @@ public class ProfilesFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int whichButton) {
-
+                        // do nothing
                     }
                 });
         alert.show();
@@ -177,8 +168,10 @@ public class ProfilesFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
             if(result.equals("Success")){
+                Toast.makeText(getActivity(), "Key created with success!", Toast.LENGTH_LONG).show();
             }
             else if(result.equals("Failed")){
+                Toast.makeText(getActivity(), "Key failed to create!", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -192,6 +185,4 @@ public class ProfilesFragment extends Fragment {
     public void applyChanges(){
         //TODO: Change the users.txt enter and change the username and the password of the current user, and change the SharedPreferences!
     }
-
-
 }
