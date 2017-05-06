@@ -41,6 +41,17 @@
         android:layout_alignLeft="@+id/latitude"
         android:layout_alignStart="@+id/latitude" />
 
+    <EditText
+        android:id="@+id/radius"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/radius"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/longitude"
+        android:layout_alignLeft="@+id/longitude"
+        android:layout_alignStart="@+id/longitude" />
+
     <Button
         android:id="@+id/current_location"
         android:layout_width="wrap_content"
@@ -48,7 +59,7 @@
         android:layout_marginTop="118dp"
         android:onClick="startUpdatesButtonHandler"
         android:text="@string/use_current_location"
-        android:layout_below="@+id/longitude"
+        android:layout_below="@+id/radius"
         android:layout_centerHorizontal="true" />
 
     <com.google.android.gms.maps.MapView

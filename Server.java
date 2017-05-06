@@ -193,6 +193,65 @@ public class Server implements Runnable {
 						System.out.println(time() + "Get all keys from user " + username + "\n");
 						oos.writeObject(userKeys);
 						break;
+					case "getexistinglocations":
+						File locationsFile = new File("files/locations.txt");
+						Scanner locationsFileScanner = new Scanner(locationsFile);
+						ArrayList<String[]> locationList = new ArrayList<String[]>();
+						while (locationsFileScanner.hasNext()) {
+							wholeLine = locationsFileScanner.nextLine();
+							arr = wholeLine.split(SEPARATOR);
+							locationList.add(arr);
+						}
+						locationsFileScanner.close();
+						System.out.println(time() + "Get all available locations from the server\n");
+						oos.writeObject(locationList);
+						break;
+					case "savenewlocation":
+						String[] locval = vs[1].split(SEPARATOR);
+						String locName = locval[0];
+						String locLatitude = locval[1];
+						String locLongitude = locval[2];
+						String locRadius = locval[3];
+						try {
+							locationsFile = new File("files/locations.txt");
+							if (!locationsFile.exists()) {
+								locationsFile.createNewFile();
+							}
+							PrintWriter locWriter = new PrintWriter(new FileWriter(locationsFile, true));
+							locWriter.println(locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
+							locWriter.close();
+						} catch (IOException e) {
+							System.out.println(e);
+						}
+						System.out.println(time() + "Created Location <" + locName + ": " + locLatitude + ", " + locLongitude + ", radius: " + locRadius + ">\n");
+						oos.writeObject(true);
+						break;
+					case "deletelocation":
+						String locDeleteName = vs[1];
+						String locationString = "files/locations.txt";
+						locationsFile = new File("files/locations.txt");
+						File tempFile = new File("files/locationsTemp.txt");
+						BufferedWriter bwriter = new BufferedWriter(new FileWriter(tempFile));
+						locationsFileScanner = new Scanner(locationsFile);
+						boolean check = false;
+						while (locationsFileScanner.hasNext()) {
+							wholeLine = locationsFileScanner.nextLine();
+							arr = wholeLine.split(SEPARATOR);
+							if (arr[0].equals(locDeleteName)) {
+								System.out.println(locDeleteName);
+								System.out.println(arr[0]);
+								continue;
+							}
+							bwriter.write(wholeLine + System.getProperty("line.separator"));
+						}
+						locationsFileScanner.close();
+						bwriter.close(); 
+						locationsFile.delete();
+						check = tempFile.renameTo(locationsFile);
+						System.out.println(time() + "Deleted location: <" + locDeleteName + ">\n");
+						oos.writeObject(check);												
+					default:
+						break;	
 				}
 			}
 		} catch (IOException | ClassNotFoundException e) {

@@ -167,20 +167,11 @@ public class MessagesActivity extends AppCompatActivity {
                     MessagesMenu whatthefuck = new MessagesMenu();
                     return whatthefuck;
                 case 2:
-                    // Top Rated fragment activity
-                    Bundle extras = getIntent().getExtras();
-                    if (extras != null) {
-                        String value = extras.getString("key");
-                        Toast.makeText(MessagesActivity.this,value,Toast.LENGTH_LONG).show();
-                        //The key argument here must match that used in the other activity
-                    }
                     Locations locations = new Locations();
-                    locations.setArguments(extras);
-
                     return locations;
             }
-            //return PlaceholderFragment.newInstance(position + 1);
-            return null;
+            return PlaceholderFragment.newInstance(position + 1);
+            // return null;
         }
 
         @Override

@@ -10,15 +10,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
 public class CustomLocationAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> locations = new ArrayList<>();
+    private ServerCommunication server;
+
 
     public CustomLocationAdapter(Context context, ArrayList<String> locations) {
         super(context, 0, locations);
         this.locations = locations;
+        server = new ServerCommunication("10.0.2.2", 11113);
+
     }
 
     @Override
@@ -38,6 +43,7 @@ public class CustomLocationAdapter extends ArrayAdapter<String> {
             @Override
             public void onClick(View v) {
                 //do something
+                boolean deleted = server.deleteLocation(locations.get(position));
                 locations.remove(position);
                 notifyDataSetChanged();
             }
