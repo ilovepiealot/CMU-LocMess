@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -77,10 +78,15 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
     // Time when the location was updated represented as a String.
     protected String mLastUpdateTime;
 
+    private ServerCommunication server;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newlocation);
+
+        server = new ServerCommunication("10.0.2.2", 11113);
 
         mLatitudeText = (TextView) findViewById((R.id.latitude));
         mLongitudeText = (TextView) findViewById((R.id.longitude));
@@ -288,11 +294,22 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
     public void saveLocation(View v) {
 
         EditText editLocationName = (EditText) findViewById(R.id.location_name);
-        String locationName = editLocationName.getText().toString();
+        EditText editLatitude = (EditText) findViewById(R.id.latitude);
+        EditText editLongitude = (EditText) findViewById(R.id.longitude);
+        EditText editRadius = (EditText) findViewById(R.id.radius);
 
-        Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
-        intent.putExtra("key", locationName);
-        startActivity(intent);
+
+        String locName = editLocationName.getText().toString();
+        String locLatitude = editLatitude.getText().toString().substring(6);
+        String locLongitude = editLongitude.getText().toString().substring(6);
+        String locRadius = editRadius.getText().toString();
+
+
+        if (locName != null && locLatitude != null && locLongitude != null && locRadius != null) {
+            server.saveNewLocation(locName, locLatitude, locLongitude, locRadius);
+            Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
+            startActivity(intent);
+        }
 
     }
 
