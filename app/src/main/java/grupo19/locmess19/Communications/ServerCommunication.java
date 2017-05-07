@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Map;
 
 
 import static android.content.ContentValues.TAG;
@@ -20,6 +21,8 @@ public class ServerCommunication {
 
     private String ip;
     private int port;
+    String a;
+    int id;
 
     private boolean registered = false;
     private boolean logged = false;
@@ -27,6 +30,7 @@ public class ServerCommunication {
     private boolean getted = false;
 
     private ArrayList<SimpleEntry<String,String>> userKeys = null;
+    private Map<String,String> messageTitles = null;
 
 
     public ServerCommunication(String ip, int port) {
@@ -118,7 +122,7 @@ public class ServerCommunication {
         return registered;
     }
 
-    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate) {
+    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -135,7 +139,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate);
+                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -159,8 +163,7 @@ public class ServerCommunication {
 
         return created;
     }
-
-    public boolean getTitles() {
+    public Map<String, String> getTitles() {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -179,13 +182,15 @@ public class ServerCommunication {
 
                         oos.writeObject("getTitles:");
                         //blocks
-                        // String a = (String) ois.readObject();
-                        getted = (String.valueOf(ois.readObject())).equals("true");
-                        Log.d(TAG, String.valueOf(getted));
+                        //a = (String) ois.readObject();
+
+                        messageTitles = (Map<String, String>) ois.readObject();
 
                         oos.writeObject("quit");
 
-                    } catch (IOException | ClassNotFoundException e) {
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
@@ -199,7 +204,48 @@ public class ServerCommunication {
             e.printStackTrace();
         }
 
-        return getted;
+        return messageTitles;
+    }
+
+    public String getMessage(final String id){
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("getMessage:" + id);
+                        //blocks
+                        a = (String) ois.readObject();
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {;
+            e.printStackTrace();
+        }
+
+        return a;
     }
 
     public boolean saveNewKey(final String username, final String key, final String value) {

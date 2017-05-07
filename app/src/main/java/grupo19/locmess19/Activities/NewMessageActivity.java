@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -41,6 +43,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private Button btn_date;
     private Button btn_date_end;
     private Button createnewmessage;
+    public String username;
 
     private ServerCommunication server;
 
@@ -49,6 +52,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newmessage);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        username = sharedPreferences.getString("loggedUser", "");
 
         spinner = (Spinner) findViewById(R.id.location_selector);
         ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.locations, android.R.layout.simple_spinner_item);
@@ -82,8 +88,6 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         });
 
         updateLabel();
-
-
 
         server = new ServerCommunication("10.0.2.2", 11113);
     }
@@ -143,8 +147,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         String messageContent = ((TextView) findViewById(R.id.messageContent)).getText().toString();
         String start_date = ((TextView) findViewById(R.id.text_start_date)).getText().toString();
         String end_date = ((TextView) findViewById(R.id.text_end_date)).getText().toString();
+        String location = spinner.getSelectedItem().toString();
 
-        if (server.createNewMessage(message_title, messageContent, start_date, end_date )) {
+        if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username)) {
             startActivity(new Intent(NewMessageActivity.this, InboxActivity.class));
         } else {
             Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();
