@@ -4,28 +4,40 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.AbstractMap.SimpleEntry;
 
 
 import java.util.List;
 
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
 public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>> {
 
     Context context;
     private List<SimpleEntry<String,String>> items;
+    ServerCommunication server;
+    String username;
 
     public KeyValueListAdapter(Context context, int resourceId, List<SimpleEntry<String,String>> items) {
         super(context, resourceId, items);
         this.context = context;
         this.items = items;
+        server = new ServerCommunication("10.0.2.2", 11113);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        username = sharedPreferences.getString("loggedUser", "");
+
     }
 
     /*private view holder class*/
@@ -61,10 +73,9 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
                 alertbox.setTitle("Delete Key");
                 alertbox.setPositiveButton("Delete",
                         new DialogInterface.OnClickListener() {
-
                             public void onClick(DialogInterface arg0,
                                                 int arg1) {
-                                // TODO: delete from keysFile!!!
+                                new DeleteKeyOperation().execute(username, items.get(position).getKey());
                                 items.remove(position);
                                 notifyDataSetChanged();
                             }
@@ -85,4 +96,33 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
 
         return convertView;
     }
+
+    private class DeleteKeyOperation extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            if (server.deleteKey(params[0],params[1])) {
+                return "Success";
+            } else {
+                return "Failed";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if(result.equals("Success")){
+               Toast.makeText(context, "Key deleted with success!", Toast.LENGTH_LONG).show();
+            }
+            else if(result.equals("Failed")){
+               Toast.makeText(context, "Key failed to delete!", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+    }
+
 }

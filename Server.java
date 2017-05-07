@@ -1,35 +1,26 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
-import java.io.PrintWriter;
-import java.io.ObjectOutputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 
 
 public class Server implements Runnable {
 
-    Socket ss;
-
-	PrintStream printer;
-    static PrintWriter writer;
-
-	static SimpleDateFormat dateformat = new SimpleDateFormat("HH:mm:ss:SSS");
+	static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss:SSS");
 	static final String SEPARATOR = "#YOLO#";
 
+	Socket ss;
 	static File usersFile = new File("files/users.txt");
 	static File keysFile = new File("files/keys.txt");
 	static File messagesFile = new File("files/messages.txt");
+	static File locationsFile = new File("files/locations.txt");
 
-	Server(Socket csocket) {
+
+	public Server(Socket csocket) {
 		this.ss = csocket;
 	}
 
@@ -39,13 +30,16 @@ public class Server implements Runnable {
         System.out.println(time() + "Server is up! Listening...\n");
 
 		File theDir = new File("files");
-		if (!theDir.exists()) { boolean result = theDir.mkdir(); }  // Create files folder
-
+		if (!theDir.exists()) { theDir.mkdir(); }  // Create files folder
+		
 		if (!usersFile.exists()) { usersFile.createNewFile(); } // Create users.txt
-
+		
 		if (!keysFile.exists()) { keysFile.createNewFile(); } // Create keys.txt
 
-		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt TODO: Maybe one messages file per user?
+		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+		
+		if (!locationsFile.exists()) {  locationsFile.createNewFile(); } // Create messages.txt
+
 
 		while(true) {
             Socket sss = s1.accept();
@@ -55,268 +49,75 @@ public class Server implements Runnable {
     }
 
     public void run() {
-
-		String[] arr;
+		String line = "";
 		String[] vs = null;
 		String[] mes = null;
-		ArrayList<String> wtf = new ArrayList<String>();
-		boolean logged = false;
-		boolean registered = true;
-		boolean created = true;
-		boolean viewed = true;
-		String line = "";
-		String username, password, username2;
-		String wholeLine;
-		String messageTitle, messageContent, messageStartDate, messageEndDate, location, user, id;
-		String title = "";
-		String titletest;
-		int messageID = 0;
-		String messageIDString = "";
-
-		
+    			
         try {
-			
 			OutputStream os = ss.getOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(os);
 
 			InputStream is = ss.getInputStream();
 			ObjectInputStream ois = new ObjectInputStream(is);
-
+			
             // User Input
-            Scanner sc = new Scanner(ss.getInputStream()).useDelimiter("\n");
-
-			// Output to Client
-			Scanner usersScanner = new Scanner(usersFile);
-			Scanner messagesScanner = new Scanner(messagesFile);
-			Scanner keysScanner = new Scanner(keysFile);
-
+            // Scanner sc = new Scanner(ss.getInputStream()).useDelimiter("\n");
+			
 			while (!(line = (String) ois.readObject()).equals("quit")) {
 				System.out.println(time() + "Received: \"" + line + "\"");
 				vs = line.split(":");
 
 				switch (vs[0]) {
 					case "login":
-
-						username = vs[1];
-						password = vs[2];
-						while (usersScanner.hasNext()) {
-							wholeLine = usersScanner.nextLine();
-							arr = wholeLine.split("\\s+");
-							String res = time() + username + ":" + password + " == " + arr[0] + ":" + arr[1] + " ? ";
-							if (username.equals(arr[0]) && password.equals(arr[1])) {
-								logged = true;
-								System.out.println(res + "YES!");
-								break;
-							} else
-								System.out.println(res + "NO!");
-						}
-						System.out.println(time() + "User \"" + username + "\" logged in: " + logged + "\n");
-						oos.writeObject(logged);
+						oos.writeObject(loginUser(vs[1], vs[2]));
 						break;
 
 					case "register":
-						username = vs[1];
-						password = vs[2];
-						PrintWriter writer;
-						while (usersScanner.hasNext()) {
-							wholeLine = usersScanner.nextLine();
-							arr = wholeLine.split("\\s+");
-							if (username.equals(arr[0])) {
-								registered = false;
-								break;
-							}
-						}
-						if (registered && username != null && password != null) {
-							try {
-								writer = new PrintWriter(new FileWriter(usersFile, true));
-								writer.println(username + " " + password);
-								writer.close();
-							} catch (IOException e) {
-								System.out.println(e);
-							}
-						}
-						System.out.println(time() + "User \"" + username + "\" registered: " + registered + "\n");
-						oos.writeObject(registered);
+						oos.writeObject(registerUser(vs[1], vs[2]));
 						break;
-					case "update":
-						break;
-					case "createnewmessage":
-						mes = line.split(SEPARATOR);
-
-						messageTitle = mes[1];
-						messageContent = mes[2];
-						messageStartDate = mes[3];
-						messageEndDate = mes[4];
-						location = mes[5];
-						username2 = mes[6];
-						messageID++;
-						messageIDString = String.valueOf(messageID);
-						System.out.println("VALOR DO ID DA MENSAGEM CRIADA" + messageIDString);
-						PrintWriter messagesWriter;
-						//if (messageTitle != null && messageContent != null && messageStartDate != null && messageEndDate != null && location != null && username2 != null){
-							try {
-								messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-								messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
-								messagesWriter.close();
-							} catch (IOException e) {
-								System.out.println(e);
-							}
-						//}
-						System.out.println("created: " + created);
-						oos.writeObject(created);
-						break;
-					case "getTitles":
-					
-						//ArrayList<AbstractMap.SimpleEntry<String, String>> messageTitles = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
-						Map<String, String> messageTitles = new HashMap<String,String>();
-						while (messagesScanner.hasNext()) {
-							wholeLine = messagesScanner.nextLine();
-							if (! (wholeLine.isEmpty())){
-							arr = wholeLine.split(SEPARATOR);
-							System.out.println("arr[0]: " + arr[0]);
-							System.out.println("arr[1]: " + arr[6]);
-							messageTitles.put(arr[0],arr[6]);
-							}
-							//messageTitles.add(new AbstractMap.SimpleEntry<String,String>(arr[0],arr[6]));
-								//title += arr[0] + SEPARATOR;
-								//messageIDString += arr[6] + SEPARATOR;
-						}						
-						System.out.println("TITULOS: " + messageTitles);
-						oos.writeObject(messageTitles);
-						break;
-					case "getMessage":
-						id = vs[1];
-						wholeLine = "";
-						titletest = "";
-						while (messagesScanner.hasNext()) {
-							wholeLine = messagesScanner.nextLine();
-							if (! (wholeLine.isEmpty())){
-								arr = wholeLine.split(SEPARATOR);
-								if(id.equals(arr[6])){
-									System.out.println("ENCONTREI A MENSAGEM:" + wholeLine);
-									titletest = wholeLine;
-								}
-							}
-						}
-						System.out.println("PASSAR MENSAGEM:" + titletest);
-						oos.writeObject(titletest);
-						break;
-						
+									
 					case "savenewkey":
 						String[] keyval = vs[1].split(SEPARATOR);
-						username = keyval[0];
-						String key = keyval[1];
-						String value = keyval[2];
-						try {
-							File userKeysFile = new File("files/" + username + "_keys.txt");
-							if (!userKeysFile.exists()) {
-								userKeysFile.createNewFile();
-							}
-							PrintWriter keyValWriter = new PrintWriter(new FileWriter(keysFile, true));
-							keyValWriter.println(key + SEPARATOR + value);
-							keyValWriter.close();
-
-							PrintWriter keyValUserWriter = new PrintWriter(new FileWriter(userKeysFile, true));
-							keyValUserWriter.println(key + SEPARATOR + value);
-							keyValUserWriter.close();
-
-						} catch (IOException e) {
-							System.out.println(e);
-						}
-						System.out.println(time() + "Created key <" + key + "," + value + "> in user " + username + "\n");
-						oos.writeObject(true);
+						oos.writeObject(saveNewKey(keyval[0], keyval[1], keyval[2]));
 						break;
-
+						
+					case "deletekey":
+						String[] user_key = vs[1].split(SEPARATOR);
+						oos.writeObject(deleteKey(user_key[0], user_key[1]));
+						break;
+						
 					case "getuserkeys":
-						username = vs[1];
-						File usersKeyFile = new File("files/" + username + "_keys.txt");
-						Scanner userKeysScanner = new Scanner(usersKeyFile);
-						ArrayList<AbstractMap.SimpleEntry<String, String>> userKeys = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
-						while (userKeysScanner.hasNext()) {
-							wholeLine = userKeysScanner.nextLine();
-							arr = wholeLine.split(SEPARATOR);
-							userKeys.add(new AbstractMap.SimpleEntry<String,String>(arr[0],arr[1]));
-						}
-						userKeysScanner.close();
-						System.out.println(time() + "Get all keys from user " + username + "\n");
-						oos.writeObject(userKeys);
+						ArrayList<SimpleEntry<String, String>> keys = getUserKeys(vs[1]);
+						oos.writeObject(keys);
 						break;
-					case "getexistinglocations":
-						File locationsFile = new File("files/locations.txt");
-						Scanner locationsFileScanner = new Scanner(locationsFile);
-						ArrayList<String[]> locationList = new ArrayList<String[]>();
-						while (locationsFileScanner.hasNext()) {
-							wholeLine = locationsFileScanner.nextLine();
-							arr = wholeLine.split(SEPARATOR);
-							locationList.add(arr);
-						}
-						locationsFileScanner.close();
-						System.out.println(time() + "Get all available locations from the server\n");
-						oos.writeObject(locationList);
-						break;
-					case "getlocationdetails":
-						String locDetailsName = vs[1];
-						locationsFile = new File("files/locations.txt");
-						locationsFileScanner = new Scanner(locationsFile);
-						String[] locDetails = new String[4];
-						while (locationsFileScanner.hasNext()) {
-							wholeLine = locationsFileScanner.nextLine();
-							arr = wholeLine.split(SEPARATOR);
-							if (arr[0].equals(locDetailsName)) {
-								locDetails[0] = locDetailsName;
-								locDetails[1] = arr[1];
-								locDetails[2] = arr[2];
-								locDetails[3] = arr[3];
-							}
-						}
-						locationsFileScanner.close();
-						System.out.println(time() + "Location details: + " + locDetailsName + "\n");
-						oos.writeObject(locDetails);
-						break;
+						
 					case "savenewlocation":
 						String[] locval = vs[1].split(SEPARATOR);
-						String locName = locval[0];
-						String locLatitude = locval[1];
-						String locLongitude = locval[2];
-						String locRadius = locval[3];
-						try {
-							locationsFile = new File("files/locations.txt");
-							if (!locationsFile.exists()) {
-								locationsFile.createNewFile();
-							}
-							PrintWriter locWriter = new PrintWriter(new FileWriter(locationsFile, true));
-							locWriter.println(locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
-							locWriter.close();
-						} catch (IOException e) {
-							System.out.println(e);
-						}
-						System.out.println(time() + "Created Location <" + locName + ": " + locLatitude + ", " + locLongitude + ", radius: " + locRadius + ">\n");
-						oos.writeObject(true);
+						oos.writeObject(saveNewLocation(locval[0], locval[1], locval[2], locval[3]));
 						break;
+						
+					case "getexistinglocations":
+						ArrayList<String[]> locationList = getExistingLocations();
+						oos.writeObject(locationList);
+						break;
+						
 					case "deletelocation":
-						String locDeleteName = vs[1];
-						String locationString = "files/locations.txt";
-						locationsFile = new File("files/locations.txt");
-						File tempFile = new File("files/locationsTemp.txt");
-						BufferedWriter bwriter = new BufferedWriter(new FileWriter(tempFile));
-						locationsFileScanner = new Scanner(locationsFile);
-						boolean check = false;
-						while (locationsFileScanner.hasNext()) {
-							wholeLine = locationsFileScanner.nextLine();
-							arr = wholeLine.split(SEPARATOR);
-							if (arr[0].equals(locDeleteName)) {
-								System.out.println(locDeleteName);
-								System.out.println(arr[0]);
-								continue;
-							}
-							bwriter.write(wholeLine + System.getProperty("line.separator"));
-						}
-						locationsFileScanner.close();
-						bwriter.close(); 
-						locationsFile.delete();
-						check = tempFile.renameTo(locationsFile);
-						System.out.println(time() + "Deleted location: <" + locDeleteName + ">\n");
-						oos.writeObject(check);												
+						oos.writeObject(deleteLocation(vs[1]));
+						break;
+				
+					case "createnewmessage":
+						mes = line.split(SEPARATOR);
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4]));
+						break;
+						
+					case "getTitles":
+						oos.writeObject(getTitles());
+						break;
+					
+					case "getMessage":
+						oos.writeObject(getMessage(vs[1]));
+						break;
+											
 					default:
 						break;	
 				}
@@ -326,7 +127,278 @@ public class Server implements Runnable {
         }
 	}
 
+    public boolean loginUser(String username, String password){
+		boolean logged = false;
+		try {
+			Scanner usersScanner = new Scanner(usersFile);
+	    	while (usersScanner.hasNext()) {
+				String wholeLine = usersScanner.nextLine();
+				String[] arr = wholeLine.split("\\s+");
+				String res = time() + username + ":" + password + " == " + arr[0] + ":" + arr[1] + " ? ";
+				if (username.equals(arr[0]) && password.equals(arr[1])) {
+					logged = true;
+					System.out.println(res + "YES!");
+					break;
+				} else
+					System.out.println(res + "NO!");
+			}
+	    	usersScanner.close();
+			System.out.println(time() + "User \"" + username + "\" logged in: " + logged + "\n");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return logged;
+    }
+    
+    public boolean registerUser(String username, String password){
+		boolean registered = true;
+		try {
+			Scanner usersScanner = new Scanner(usersFile);
+	    	PrintWriter writer;
+			while (usersScanner.hasNext()) {
+				String wholeLine = usersScanner.nextLine();
+				String[] arr = wholeLine.split("\\s+");
+				if (username.equals(arr[0])) {
+					registered = false;
+					break;
+				}
+			}
+			if (registered && username != null && password != null) {
+					writer = new PrintWriter(new FileWriter(usersFile, true));
+					writer.println(username + " " + password);
+					File userKeysFile = new File("files/" + username + "_keys.txt");
+					if (!userKeysFile.exists()) { userKeysFile.createNewFile(); }
+					File userMessagesFile = new File("files/" + username + "_messages.txt");
+					if (!userMessagesFile.exists()) { userMessagesFile.createNewFile(); }
+					writer.close();
+			}
+			usersScanner.close();
+			System.out.println(time() + "User \"" + username + "\" registered: " + registered + "\n");
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		return registered;
+    }
+        
+    public boolean saveNewKey(String username, String key, String value){
+
+    	try {
+			File userKeysFile = new File("files/" + username + "_keys.txt");
+
+			PrintWriter keyValWriter = new PrintWriter(new FileWriter(keysFile, true));
+			keyValWriter.println(key + SEPARATOR + value);
+			keyValWriter.close();
+
+			PrintWriter keyValUserWriter = new PrintWriter(new FileWriter(userKeysFile, true));
+			keyValUserWriter.println(key + SEPARATOR + value);
+			keyValUserWriter.close();
+
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		System.out.println(time() + "Created key <" + key + "," + value + "> in user " + username + "\n");
+		return true;
+    }
+    
+    public boolean deletePrivateKey(String username, String key){
+    	try {
+			File keysFile = new File("files/" + username + "_keys.txt");
+			File tempFile = new File("files/" + username + "_keysTemp.txt");
+			Writer bwriter = new BufferedWriter(new FileWriter(tempFile));
+			Scanner keysScanner = new Scanner(keysFile);
+			boolean check = true;
+			while (keysScanner.hasNext()) {
+				String wholeLine = keysScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				if (!arr[0].equals(key)) {
+					bwriter.write(wholeLine + System.getProperty("line.separator"));
+				}
+			}
+			keysScanner.close();
+			bwriter.close();
+			keysFile.delete();
+			check = tempFile.renameTo(keysFile);
+			System.out.println(time() + "Deleted key <" + key + "> from user " + username + " : " + check + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
+    }
+    
+    public boolean deleteGlobalKey(String key){
+    	try {
+			File keysFile2 = new File("files/keys.txt");
+			File tempFile2 = new File("files/keysTemp.txt");
+			Writer bwriter2 = new BufferedWriter(new FileWriter(tempFile2));
+			Scanner keysScanner2 = new Scanner(keysFile2);
+			boolean check2 = true;
+			while (keysScanner2.hasNext()) {
+				String wholeLine = keysScanner2.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				if (!arr[0].equals(key)) {
+					bwriter2.write(wholeLine + System.getProperty("line.separator"));
+				}
+			}
+			keysScanner2.close();
+			bwriter2.close();
+			keysFile2.delete();
+			check2 = tempFile2.renameTo(keysFile2);
+			System.out.println(time() + "Deleted global key <" + key + ">" + " : " + check2 + "\n");
+		
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return true;
+    }
+    
+    public boolean deleteKey(String username, String key){
+	    deleteGlobalKey(key);
+	    deletePrivateKey(username, key);
+    	return true;
+    }
+    
+    public ArrayList<SimpleEntry<String, String>> getUserKeys(String username){
+		File usersKeyFile = new File("files/" + username + "_keys.txt");
+		Scanner userKeysScanner;
+		ArrayList<SimpleEntry<String, String>> userKeys = new ArrayList<SimpleEntry<String, String>>();
+		try {
+			userKeysScanner = new Scanner(usersKeyFile);
+			while (userKeysScanner.hasNext()) {
+				String wholeLine = userKeysScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				userKeys.add(new SimpleEntry<String,String>(arr[0],arr[1]));
+				//userKeysScanner.close();
+				System.out.println(time() + "Get all keys from user " + username + "\n");
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return userKeys;
+    }
+   
+    public boolean saveNewLocation(String locName, String locLatitude, String locLongitude, String locRadius){
+    	try {
+			File locationsFile = new File("files/locations.txt");
+			if (!locationsFile.exists()) {
+				locationsFile.createNewFile();
+			}
+			PrintWriter locWriter = new PrintWriter(new FileWriter(locationsFile, true));
+			locWriter.println(locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
+			locWriter.close();
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		System.out.println(time() + "Created Location <" + locName + ": " + locLatitude + ", " + locLongitude + ", radius: " + locRadius + ">\n");
+		return true;
+    }
+
+    public ArrayList<String[]> getExistingLocations(){
+    	File locationsFile = new File("files/locations.txt");
+		Scanner locationsFileScanner;
+		ArrayList<String[]> locationList = new ArrayList<String[]>();
+		try {
+			locationsFileScanner = new Scanner(locationsFile);
+			while (locationsFileScanner.hasNext()) {
+				String wholeLine = locationsFileScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				locationList.add(arr);
+			}
+			locationsFileScanner.close();
+			System.out.println(time() + "Get all available locations from the server\n");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return locationList;
+    }
+
+    public boolean deleteLocation(String locDeleteName){
+		File locationsFile = new File("files/locations.txt");
+		File tempFile = new File("files/locationsTemp.txt");
+		Writer bwriter;
+		boolean check = false;
+		try {
+			bwriter = new BufferedWriter(new FileWriter(tempFile));
+			Scanner locationsFileScanner = new Scanner(locationsFile);
+			while (locationsFileScanner.hasNext()) {
+				String wholeLine = locationsFileScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				if (arr[0].equals(locDeleteName)) {
+					System.out.println(locDeleteName);
+					System.out.println(arr[0]);
+					continue;
+				}
+				bwriter.write(wholeLine + System.getProperty("line.separator"));
+			}
+			locationsFileScanner.close();
+			bwriter.close(); 
+			locationsFile.delete();
+			check = tempFile.renameTo(locationsFile);
+			System.out.println(time() + "Deleted location: <" + locDeleteName + "> : " + check + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return check;
+		
+    }
+        
+    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate){
+    	PrintWriter messagesWriter;
+		try {
+			messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
+			messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate);
+			messagesWriter.close();
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		System.out.println("Message created!"); // TODO: Improve this!!
+		return true;
+    }
+
+	public HashMap<String, String> getTitles() {
+		HashMap<String, String> messageTitles = new HashMap<String,String>();
+		try {
+			Scanner	messagesScanner = new Scanner(messagesFile);
+			while (messagesScanner.hasNext()) {
+				String wholeLine = messagesScanner.nextLine();
+				if (! (wholeLine.isEmpty())){
+					String[] arr = wholeLine.split(SEPARATOR);
+					System.out.println("arr[0]: " + arr[0]);
+					System.out.println("arr[1]: " + arr[6]);
+					messageTitles.put(arr[0],arr[6]);
+				}
+			}
+			messagesScanner.close();
+			System.out.println("TITULOS: " + messageTitles);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return messageTitles;
+	}
+
+	public String getMessage(String id){
+		String titletest = "";
+		try {
+			Scanner messagesScanner = new Scanner(messagesFile);
+			while (messagesScanner.hasNext()) {
+				String wholeLine = messagesScanner.nextLine();
+				if (! (wholeLine.isEmpty())){
+					String[] arr = wholeLine.split(SEPARATOR);
+					if(id.equals(arr[6])){
+						System.out.println("ENCONTREI A MENSAGEM:" + wholeLine);
+						titletest = wholeLine;
+					}
+				}
+			}
+			messagesScanner.close();
+			System.out.println("PASSAR MENSAGEM:" + titletest);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return titletest;
+	}
+
 	public static String time(){
-		return dateformat.format(new Date()) + " - ";
+		return DATE_FORMAT.format(new Date()) + " - ";
 	}
 }
+

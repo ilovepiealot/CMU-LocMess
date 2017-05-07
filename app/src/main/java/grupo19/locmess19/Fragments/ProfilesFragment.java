@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.AbstractMap.SimpleEntry;
@@ -30,8 +31,7 @@ import grupo19.locmess19.R;
 public class ProfilesFragment extends Fragment {
 
     private ListView keyList;
-    Button applyBtn;
-    private String username, password;
+    private String username;
     private List<SimpleEntry<String,String>> keyValueItems;
     private ServerCommunication server;
 
@@ -48,7 +48,6 @@ public class ProfilesFragment extends Fragment {
         server = new ServerCommunication("10.0.2.2", 11113);
 
         Button newKeyBtn = (Button) v.findViewById(R.id.add_key_button);
-        applyBtn = (Button) v.findViewById(R.id.apply_profile_button);
 
         newKeyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,46 +55,14 @@ public class ProfilesFragment extends Fragment {
                 createNewKey();
             }
         });
-        applyBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                applyChanges();
-            }
-        });
-
 
         username = getArguments().getString("username", "");
-        password = getArguments().getString("password", "");
 
-        EditText editUsername = (EditText) v.findViewById(R.id.editUsername);
-        EditText editPassword = (EditText) v.findViewById(R.id.editPassword);
-
-        editUsername.setText(username);
-        editPassword.setText(password);
+        TextView usernameText = (TextView) v.findViewById(R.id.UsernameText);
+        usernameText.setText(username);
 
         keyList = (ListView) v.findViewById(R.id.keys_preview_list);
 
-        TextWatcher tw = new TextWatcher() {
-            @Override
-            public void afterTextChanged(Editable s) {}
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(!s.toString().equals(username) || !s.toString().equals(password)){
-                    applyBtn.setEnabled(true);
-                }
-                else if(s.toString().equals(username) && s.toString().equals(password)){
-                    applyBtn.setEnabled(false);
-                }
-            }
-        };
-
-        editUsername.addTextChangedListener(tw);
-        editPassword.addTextChangedListener(tw);
         populateKeyList(v);
 
        return v;
@@ -182,7 +149,4 @@ public class ProfilesFragment extends Fragment {
         protected void onProgressUpdate(Void... values) {}
     }
 
-    public void applyChanges(){
-        //TODO: Change the users.txt enter and change the username and the password of the current user, and change the SharedPreferences!
-    }
 }

@@ -2,24 +2,21 @@ package grupo19.locmess19.Activities;
 //import grupo19.locmess19.frag
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.TextView;
-import android.widget.Toast;
 
 import grupo19.locmess19.Fragments.Locations;
 import grupo19.locmess19.Fragments.MessagesMenu;
@@ -43,7 +40,6 @@ public class MessagesActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private String username;
-    private String password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +70,6 @@ public class MessagesActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
-        password = sharedPreferences.getString("userPassword", "");
 
     }
 
@@ -159,7 +154,6 @@ public class MessagesActivity extends AppCompatActivity {
                     ProfilesFragment profilesFragment = new ProfilesFragment();
                     Bundle bundle = new Bundle();
                     bundle.putString("username", username);
-                    bundle.putString("password", password);
                     profilesFragment.setArguments(bundle);
                     return profilesFragment;
                 case 1:

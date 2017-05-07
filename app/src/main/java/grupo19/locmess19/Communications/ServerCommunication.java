@@ -166,6 +166,7 @@ public class ServerCommunication {
 
         return created;
     }
+
     public Map<String, String> getTitles() {
 
         try {
@@ -495,6 +496,44 @@ public class ServerCommunication {
         return locationDetails;
     }
 
+    public boolean deleteKey(final String key, final String username) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("deletekey:" + key + SEPARATOR + username);
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
 
     private Object[] createCommunication(Socket s) {
 
