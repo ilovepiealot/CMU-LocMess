@@ -31,12 +31,9 @@ public class ServerCommunication {
     private boolean destroyed = false;
 
     private ArrayList<SimpleEntry<String,String>> userKeys = null;
-<<<<<<< HEAD
     private Map<String,String> messageTitles = null;
-=======
     private ArrayList<String[]> locationList = null;
     private String[] locationDetails = null;
->>>>>>> refs/remotes/origin/master
 
 
     public ServerCommunication(String ip, int port) {
