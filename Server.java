@@ -11,6 +11,8 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 
 public class Server implements Runnable {
@@ -57,14 +59,19 @@ public class Server implements Runnable {
 		String[] arr;
 		String[] vs = null;
 		String[] mes = null;
+		ArrayList<String> wtf = new ArrayList<String>();
 		boolean logged = false;
 		boolean registered = true;
 		boolean created = true;
 		boolean viewed = true;
 		String line = "";
-		String username, password;
+		String username, password, username2;
 		String wholeLine;
-		String messageTitle, messageContent, messageStartDate, messageEndDate;
+		String messageTitle, messageContent, messageStartDate, messageEndDate, location, user, id;
+		String title = "";
+		String titletest;
+		int messageID = 0;
+		String messageIDString = "";
 
 		
         try {
@@ -140,20 +147,61 @@ public class Server implements Runnable {
 						messageContent = mes[2];
 						messageStartDate = mes[3];
 						messageEndDate = mes[4];
+						location = mes[5];
+						username2 = mes[6];
+						messageID++;
+						messageIDString = String.valueOf(messageID);
+						System.out.println("VALOR DO ID DA MENSAGEM CRIADA" + messageIDString);
 						PrintWriter messagesWriter;
-						try {
-							messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-							messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate);
-							messagesWriter.close();
-						} catch (IOException e) {
-							System.out.println(e);
-						}
+						//if (messageTitle != null && messageContent != null && messageStartDate != null && messageEndDate != null && location != null && username2 != null){
+							try {
+								messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
+								messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+								messagesWriter.close();
+							} catch (IOException e) {
+								System.out.println(e);
+							}
+						//}
 						System.out.println("created: " + created);
 						oos.writeObject(created);
 						break;
 					case "getTitles":
-						oos.writeObject(viewed);
+					
+						//ArrayList<AbstractMap.SimpleEntry<String, String>> messageTitles = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
+						Map<String, String> messageTitles = new HashMap<String,String>();
+						while (messagesScanner.hasNext()) {
+							wholeLine = messagesScanner.nextLine();
+							if (! (wholeLine.isEmpty())){
+							arr = wholeLine.split(SEPARATOR);
+							System.out.println("arr[0]: " + arr[0]);
+							System.out.println("arr[1]: " + arr[6]);
+							messageTitles.put(arr[0],arr[6]);
+							}
+							//messageTitles.add(new AbstractMap.SimpleEntry<String,String>(arr[0],arr[6]));
+								//title += arr[0] + SEPARATOR;
+								//messageIDString += arr[6] + SEPARATOR;
+						}						
+						System.out.println("TITULOS: " + messageTitles);
+						oos.writeObject(messageTitles);
 						break;
+					case "getMessage":
+						id = vs[1];
+						wholeLine = "";
+						titletest = "";
+						while (messagesScanner.hasNext()) {
+							wholeLine = messagesScanner.nextLine();
+							if (! (wholeLine.isEmpty())){
+								arr = wholeLine.split(SEPARATOR);
+								if(id.equals(arr[6])){
+									System.out.println("ENCONTREI A MENSAGEM:" + wholeLine);
+									titletest = wholeLine;
+								}
+							}
+						}
+						System.out.println("PASSAR MENSAGEM:" + titletest);
+						oos.writeObject(titletest);
+						break;
+						
 					case "savenewkey":
 						String[] keyval = vs[1].split(SEPARATOR);
 						username = keyval[0];
@@ -205,6 +253,25 @@ public class Server implements Runnable {
 						locationsFileScanner.close();
 						System.out.println(time() + "Get all available locations from the server\n");
 						oos.writeObject(locationList);
+						break;
+					case "getlocationdetails":
+						String locDetailsName = vs[1];
+						locationsFile = new File("files/locations.txt");
+						locationsFileScanner = new Scanner(locationsFile);
+						String[] locDetails = new String[4];
+						while (locationsFileScanner.hasNext()) {
+							wholeLine = locationsFileScanner.nextLine();
+							arr = wholeLine.split(SEPARATOR);
+							if (arr[0].equals(locDetailsName)) {
+								locDetails[0] = locDetailsName;
+								locDetails[1] = arr[1];
+								locDetails[2] = arr[2];
+								locDetails[3] = arr[3];
+							}
+						}
+						locationsFileScanner.close();
+						System.out.println(time() + "Location details: + " + locDetailsName + "\n");
+						oos.writeObject(locDetails);
 						break;
 					case "savenewlocation":
 						String[] locval = vs[1].split(SEPARATOR);
