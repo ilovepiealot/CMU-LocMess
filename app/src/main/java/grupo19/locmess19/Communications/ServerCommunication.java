@@ -167,7 +167,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public Map<String, String> getTitles() {
+    public Map<String, String> getTitles(final String username) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -184,7 +184,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("getTitles:");
+                        oos.writeObject("getTitles:" + username);
                         //blocks
                         //a = (String) ois.readObject();
 
@@ -211,7 +211,7 @@ public class ServerCommunication {
         return messageTitles;
     }
 
-    public String getMessage(final String id){
+    public String getMessage(final String id, final String username){
         try {
             Thread t = new Thread(new Runnable() {
                 @Override
@@ -227,7 +227,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("getMessage:" + id);
+                        oos.writeObject("getMessage:" + id + ":" + username);
                         //blocks
                         a = (String) ois.readObject();
 

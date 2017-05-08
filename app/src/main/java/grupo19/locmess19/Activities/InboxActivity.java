@@ -2,7 +2,9 @@ package grupo19.locmess19.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,6 +37,8 @@ public class InboxActivity extends AppCompatActivity{
     //private List<AbstractMap.SimpleEntry<String,String>> messageTitles;
     private Map<String, String> messageTitles;
     String[] extra;
+    String username;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +46,10 @@ public class InboxActivity extends AppCompatActivity{
         setContentView(R.layout.activity_inbox);
         server = new ServerCommunication("10.0.2.2", 11113);
 
-        /*
-        receivedTitles = server.getTitles().toString().split("#YOLO#");
-        n = receivedTitles.length;
-        for (i=0; i<n; i++){
-            messageTitles.add(receivedTitles[i]);
-        }*/
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        username = sharedPreferences.getString("loggedUser", "");
 
-        messageTitles = server.getTitles();
+        messageTitles = server.getTitles(username);
         ArrayList<String> receivedTitles = new ArrayList<String>();
 
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {

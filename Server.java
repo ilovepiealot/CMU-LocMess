@@ -16,7 +16,8 @@ public class Server implements Runnable {
 	Socket ss;
 	static File usersFile = new File("files/users.txt");
 	static File keysFile = new File("files/keys.txt");
-	static File messagesFile = new File("files/messages.txt");
+	//static File messagesFile = new File("files/messages.txt");
+	static File messagesFile;
 	static File locationsFile = new File("files/locations.txt");
 
 
@@ -36,7 +37,7 @@ public class Server implements Runnable {
 		
 		if (!keysFile.exists()) { keysFile.createNewFile(); } // Create keys.txt
 
-		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+		//if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
 		
 		if (!locationsFile.exists()) {  locationsFile.createNewFile(); } // Create messages.txt
 
@@ -107,15 +108,15 @@ public class Server implements Runnable {
 				
 					case "createnewmessage":
 						mes = line.split(SEPARATOR);
-						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4]));
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6]));
 						break;
 						
 					case "getTitles":
-						oos.writeObject(getTitles());
+						oos.writeObject(getTitles(vs[1]));
 						break;
 					
 					case "getMessage":
-						oos.writeObject(getMessage(vs[1]));
+						oos.writeObject(getMessage(vs[1], vs[2]));
 						break;
 											
 					default:
@@ -341,21 +342,37 @@ public class Server implements Runnable {
 		
     }
         
-    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate){
-    	PrintWriter messagesWriter;
-		try {
-			messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-			messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate);
-			messagesWriter.close();
-		} catch (IOException e) {
+    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2){
+		int messageID = 0;
+		String messageIDString = "";
+		boolean created = true;
+		messageID++;
+		messageIDString = String.valueOf(messageID);
+		messagesFile = new File("files/messages_" + username2 + ".txt");
+		try{
+		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+		} catch (IOException e){
 			System.out.println(e);
 		}
-		System.out.println("Message created!"); // TODO: Improve this!!
-		return true;
+		PrintWriter messagesWriter;
+		//if (messageTitle != null && messageContent != null && messageStartDate != null && messageEndDate != null && location != null && username2 != null){
+			try {
+				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
+				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+				messagesWriter.close();
+			} catch (IOException e) {
+				System.out.println(e);
+			}
+		//}
+		System.out.println("created: " + created);
+		
+		//oos.writeObject(created);
+		return created;
     }
 
-	public HashMap<String, String> getTitles() {
+	public HashMap<String, String> getTitles(String username) {
 		HashMap<String, String> messageTitles = new HashMap<String,String>();
+		messagesFile = new File("files/messages_" + username + ".txt");
 		try {
 			Scanner	messagesScanner = new Scanner(messagesFile);
 			while (messagesScanner.hasNext()) {
@@ -375,8 +392,9 @@ public class Server implements Runnable {
 		return messageTitles;
 	}
 
-	public String getMessage(String id){
+	public String getMessage(String id, String username){
 		String titletest = "";
+		messagesFile = new File("files/messages_" + username + ".txt");
 		try {
 			Scanner messagesScanner = new Scanner(messagesFile);
 			while (messagesScanner.hasNext()) {
