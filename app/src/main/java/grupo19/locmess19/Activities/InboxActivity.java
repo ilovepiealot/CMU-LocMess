@@ -38,8 +38,7 @@ public class InboxActivity extends AppCompatActivity{
     private Map<String, String> messageTitles;
     String[] extra;
     String username;
-
-
+    String inbox = "inbox";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,7 @@ public class InboxActivity extends AppCompatActivity{
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
 
-        messageTitles = server.getTitles(username);
+        messageTitles = server.getTitles(username,inbox);
         ArrayList<String> receivedTitles = new ArrayList<String>();
 
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {

@@ -167,7 +167,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public Map<String, String> getTitles(final String username) {
+    public Map<String, String> getTitles(final String username, final String box) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -184,7 +184,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("getTitles:" + username);
+                        oos.writeObject("getTitles:" + username + ":" + box);
                         //blocks
                         //a = (String) ois.readObject();
 

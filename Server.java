@@ -16,7 +16,7 @@ public class Server implements Runnable {
 	Socket ss;
 	static File usersFile = new File("files/users.txt");
 	static File keysFile = new File("files/keys.txt");
-	//static File messagesFile = new File("files/messages.txt");
+	static File messagesGlobalFile = new File("files/messages.txt");
 	static File messagesFile;
 	static File locationsFile = new File("files/locations.txt");
 
@@ -37,7 +37,7 @@ public class Server implements Runnable {
 		
 		if (!keysFile.exists()) { keysFile.createNewFile(); } // Create keys.txt
 
-		//if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+		if (!messagesGlobalFile.exists()) {  messagesGlobalFile.createNewFile(); } // Create messages.txt
 		
 		if (!locationsFile.exists()) {  locationsFile.createNewFile(); } // Create messages.txt
 
@@ -112,7 +112,7 @@ public class Server implements Runnable {
 						break;
 						
 					case "getTitles":
-						oos.writeObject(getTitles(vs[1]));
+						oos.writeObject(getTitles(vs[1], vs[2]));
 						break;
 					
 					case "getMessage":
@@ -350,16 +350,20 @@ public class Server implements Runnable {
 		messageIDString = String.valueOf(messageID);
 		messagesFile = new File("files/messages_" + username2 + ".txt");
 		try{
-		if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+			if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
 		} catch (IOException e){
 			System.out.println(e);
 		}
 		PrintWriter messagesWriter;
+		PrintWriter messagesGlobalWriter;
 		//if (messageTitle != null && messageContent != null && messageStartDate != null && messageEndDate != null && location != null && username2 != null){
 			try {
 				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
 				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
 				messagesWriter.close();
+				messagesGlobalWriter = new PrintWriter(new FileWriter(messagesGlobalFile, true));
+				messagesGlobalWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+				messagesGlobalWriter.close();
 			} catch (IOException e) {
 				System.out.println(e);
 			}
@@ -370,24 +374,51 @@ public class Server implements Runnable {
 		return created;
     }
 
-	public HashMap<String, String> getTitles(String username) {
+	public HashMap<String, String> getTitles(String username, String box) {
 		HashMap<String, String> messageTitles = new HashMap<String,String>();
 		messagesFile = new File("files/messages_" + username + ".txt");
-		try {
-			Scanner	messagesScanner = new Scanner(messagesFile);
-			while (messagesScanner.hasNext()) {
-				String wholeLine = messagesScanner.nextLine();
-				if (! (wholeLine.isEmpty())){
-					String[] arr = wholeLine.split(SEPARATOR);
-					System.out.println("arr[0]: " + arr[0]);
-					System.out.println("arr[1]: " + arr[6]);
-					messageTitles.put(arr[0],arr[6]);
+		if (box.equals("outbox")){
+			try {
+				Scanner	messagesScanner = new Scanner(messagesFile);
+				while (messagesScanner.hasNext()) {
+					String wholeLine = messagesScanner.nextLine();
+					System.out.println("ENTREI NO WHILE DA OUTBOX");
+					if (! (wholeLine.isEmpty())){
+						System.out.println("ENTREI NO IF DE EMPTY LINE DA OUTBOX");
+						String[] arr = wholeLine.split(SEPARATOR);
+						if (username.equals(arr[5])){							//compara o user que fez o pedido com o campo de criador da mensagem, se igual entao retorna para outbox
+							System.out.println("ENTREI NO IF DE COMPARACAO DE USERS OUTBOX");
+							System.out.println("arr[0]: " + arr[0]);
+							System.out.println("arr[1]: " + arr[6]);
+							messageTitles.put(arr[0],arr[6]);
+						}
+					}
 				}
+				messagesScanner.close();
+				System.out.println("TITULOS: " + messageTitles);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
-			messagesScanner.close();
-			System.out.println("TITULOS: " + messageTitles);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		}
+		else if (box.equals("inbox")){
+			try {
+				Scanner	messagesScanner = new Scanner(messagesFile);
+				while (messagesScanner.hasNext()) {
+					String wholeLine = messagesScanner.nextLine();
+					if (! (wholeLine.isEmpty())){
+						String[] arr = wholeLine.split(SEPARATOR);
+						if (!(username.equals(arr[5]))){							//compara o user que fez o pedido com o campo de criador da mensagem, se igual entao retorna para outbox
+							System.out.println("arr[0]: " + arr[0]);
+							System.out.println("arr[1]: " + arr[6]);
+							messageTitles.put(arr[0],arr[6]);
+						}
+					}
+				}
+				messagesScanner.close();
+				System.out.println("TITULOS: " + messageTitles);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
 		return messageTitles;
 	}
