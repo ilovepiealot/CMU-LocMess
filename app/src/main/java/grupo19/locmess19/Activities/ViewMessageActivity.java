@@ -1,7 +1,9 @@
 package grupo19.locmess19.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -20,6 +22,7 @@ public class ViewMessageActivity extends AppCompatActivity  {
     private ServerCommunication server;
     String s;
     String[] receivedMessage;
+    String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +33,12 @@ public class ViewMessageActivity extends AppCompatActivity  {
        Bundle extras = getIntent().getExtras();
         if (extras != null) {
             s = extras.getString("ID");
-            //Toast.makeText(ViewMessageActivity.this, s, Toast.LENGTH_SHORT).show();
-            //The key argument here must match that used in the other activity
         }
         //RECEBE CONTEUDO DE MENSAGEM E POPULA O VIEWMESSAGE
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        username = sharedPreferences.getString("loggedUser", "");
 
-        receivedMessage = server.getMessage(s).toString().split("#YOLO#");
-        //Toast.makeText(ViewMessageActivity.this, receivedMessage, Toast.LENGTH_SHORT).show();
+        receivedMessage = server.getMessage(s, username).toString().split("#YOLO#");
 
         TextView message_title = (TextView) findViewById(R.id.message_title);
         TextView messageContent = (TextView) findViewById(R.id.messageContent);
