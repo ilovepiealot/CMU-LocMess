@@ -1,37 +1,27 @@
 package grupo19.locmess19.Activities;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
-import grupo19.locmess19.Activities.MessagesActivity;
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
-
-import static grupo19.locmess19.R.id.start_date;
 
 public class NewMessageActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -44,6 +34,10 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private Button btn_date_end;
     private Button createnewmessage;
     public String username;
+    String receivedLocationsTitlesString;
+    //String[] receivedLocationsTitles;
+    List<String> receivedLocationsTitles = new ArrayList<>();
+    ArrayList<String[]> receivedLocations = new ArrayList<>();
 
     private ServerCommunication server;
 
@@ -52,12 +46,24 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newmessage);
+        server = new ServerCommunication("10.0.2.2", 11113);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
 
+        //POPULATE THE SPINNER
+
+        receivedLocations = server.getExistingLocations();
+        for (int i = 0; i<receivedLocations.size(); i++){
+            //receivedLocationsTitlesString = receivedLocations.get(i).split("#YOLO#")[0];
+            receivedLocationsTitlesString = receivedLocations.get(i)[0];
+            receivedLocationsTitles.add(receivedLocationsTitlesString);
+        }
+
+
         spinner = (Spinner) findViewById(R.id.location_selector);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(this, R.array.locations, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (NewMessageActivity.this,android.R.layout.simple_spinner_item, receivedLocationsTitles);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
@@ -89,7 +95,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
         updateLabel();
 
-        server = new ServerCommunication("10.0.2.2", 11113);
+
     }
     private void updateLabel(){
         text.setText(formatDateTime.format(date.getTime()));
@@ -133,7 +139,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         TextView mylocation = (TextView) view;
-        Toast.makeText(this, "Selected" +mylocation.getText(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Selected Location: " +mylocation.getText(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -149,10 +155,15 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         String end_date = ((TextView) findViewById(R.id.text_end_date)).getText().toString();
         String location = spinner.getSelectedItem().toString();
 
-        if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username)) {
-            startActivity(new Intent(NewMessageActivity.this, InboxActivity.class));
+        if (message_title.matches("") || messageContent.matches("") || start_date.matches("") || end_date.matches("") || message_title.matches("") || location.matches("") ) {
+            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+
         } else {
-            Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();
+            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username)) {
+                startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
+            } else {
+                Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
