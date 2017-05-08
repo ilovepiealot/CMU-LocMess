@@ -20,13 +20,24 @@
         android:hint="@string/location_name" />
 
     <EditText
+        android:id="@+id/wifi_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Wifi ID"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/location_name"
+        android:layout_alignLeft="@+id/location_name"
+        android:layout_alignStart="@+id/location_name" />
+
+    <EditText
         android:id="@+id/latitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/latitude"
         android:layout_marginTop="11dp"
-        android:layout_below="@+id/location_name"
+        android:layout_below="@+id/wifi_id"
         android:layout_alignLeft="@+id/location_name"
         android:layout_alignStart="@+id/location_name" />
 
@@ -34,12 +45,10 @@
         android:id="@+id/longitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/longitude"
-        android:layout_marginTop="11dp"
         android:layout_below="@+id/latitude"
-        android:layout_alignLeft="@+id/latitude"
-        android:layout_alignStart="@+id/latitude" />
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="@string/longitude" />
 
     <EditText
         android:id="@+id/radius"
@@ -52,24 +61,31 @@
         android:layout_alignLeft="@+id/longitude"
         android:layout_alignStart="@+id/longitude" />
 
+    <ToggleButton
+        android:id="@+id/loc_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/current_location"
+        android:layout_alignRight="@+id/current_location"
+        android:layout_below="@+id/radius"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="59dp"
+        android:checked="false"
+        android:onClick="toggleClick"
+        android:text="Loc Type"
+        android:textOff="GPS"
+        android:textOn="Wifi" />
+
     <Button
         android:id="@+id/current_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="118dp"
+        android:layout_marginTop="22dp"
         android:onClick="startUpdatesButtonHandler"
         android:text="@string/use_current_location"
-        android:layout_below="@+id/radius"
+        android:layout_below="@+id/loc_type"
         android:layout_centerHorizontal="true" />
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/location_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/current_location"
-        android:layout_marginTop="39dp"
-        android:layout_centerHorizontal="true"/>
-
 
 
     <Button
@@ -78,8 +94,21 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="22dp"
         android:text="@string/save_location"
-        android:layout_below="@+id/location_map"
+        android:layout_below="@+id/current_location"
         android:layout_centerHorizontal="true"
         android:onClick="saveLocation"/>
+
+    <TextView
+        android:id="@+id/gps_wifi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GPS/Wifi"
+        android:layout_alignBaseline="@+id/loc_type"
+        android:layout_alignBottom="@+id/loc_type"
+        android:layout_alignLeft="@+id/current_location"
+        android:layout_alignStart="@+id/current_location"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp" />
+
 
 </RelativeLayout>

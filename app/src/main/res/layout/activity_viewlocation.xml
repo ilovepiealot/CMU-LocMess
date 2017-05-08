@@ -19,13 +19,24 @@
         android:hint="@string/location_name" />
 
     <TextView
+        android:id="@+id/wifi_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Wifi Id"
+        android:layout_marginTop="11dp"
+        android:layout_below="@+id/location_name"
+        android:layout_alignLeft="@+id/location_name"
+        android:layout_alignStart="@+id/location_name" />
+
+    <TextView
         android:id="@+id/latitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/latitude"
         android:layout_marginTop="11dp"
-        android:layout_below="@+id/location_name"
+        android:layout_below="@+id/wifi_id"
         android:layout_alignLeft="@+id/location_name"
         android:layout_alignStart="@+id/location_name" />
 
@@ -51,24 +62,15 @@
         android:layout_alignLeft="@+id/longitude"
         android:layout_alignStart="@+id/longitude" />
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/location_map"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/current_location"
-        android:layout_marginTop="39dp"
-        android:layout_centerHorizontal="true"/>
-
-
 
     <Button
-        android:id="@+id/save_location"
+        android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
-        android:text="@string/save_location"
+        android:layout_marginTop="33dp"
+        android:onClick="saveLocation"
+        android:text="Back"
         android:layout_below="@+id/radius"
-        android:layout_centerHorizontal="true"
-        android:onClick="saveLocation"/>
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

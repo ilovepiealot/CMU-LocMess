@@ -370,7 +370,7 @@ public class ServerCommunication {
         return locationList;
     }
 
-    public boolean saveNewLocation(final String locName, final String locLatitude, final String locLongitude, final String locRadius) {
+    public boolean saveNewLocationGPS(final String locName, final String locLatitude, final String locLongitude, final String locRadius) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -387,10 +387,53 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("savenewlocation:" + locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
+                        oos.writeObject("savenewlocationGPS:" + locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
                         //blocks
                         // String a = (String) ois.readObject();
-                        locationDetails = (String[]) ois.readObject();
+                        // locationDetails = (String[]) ois.readObject();
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
+
+    public boolean saveNewLocationWifi(final String locName, final String locSSID) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("savenewlocationWifi:" + locName + SEPARATOR + locSSID);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        // locationDetails = (String[]) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
 
