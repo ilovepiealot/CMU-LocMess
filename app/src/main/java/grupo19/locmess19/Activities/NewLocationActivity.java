@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
@@ -71,6 +72,11 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
     protected String mLongitudeLabel;
     protected TextView mLatitudeText;
     protected TextView mLongitudeText;
+    protected EditText wifiID;
+    protected EditText latitudeEdit;
+    protected EditText longitudeEdit;
+    protected EditText radiusEdit;
+    protected ToggleButton locType;
 
     // Tracks the status of the location updates request.
     protected Boolean mRequestingLocationUpdates;
@@ -90,6 +96,10 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
 
         mLatitudeText = (TextView) findViewById((R.id.latitude));
         mLongitudeText = (TextView) findViewById((R.id.longitude));
+        wifiID = (EditText) findViewById(R.id.wifi_id);
+        latitudeEdit = (EditText) findViewById(R.id.latitude);
+        longitudeEdit = (EditText) findViewById(R.id.longitude);
+        radiusEdit = (EditText) findViewById(R.id.radius);
 
         mRequestingLocationUpdates = false;
         mLastUpdateTime = "";
@@ -102,6 +112,41 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         buildGoogleApiClient();
         createLocationRequest();
         buildLocationSettingsRequest();
+
+        locType = (ToggleButton) findViewById(R.id.loc_type);
+        locType.setChecked(false);
+        wifiID.setEnabled(false);
+        wifiID.setFocusable(false);
+        latitudeEdit.setEnabled(true);
+        latitudeEdit.setFocusable(true);
+        longitudeEdit.setEnabled(true);
+        longitudeEdit.setFocusable(true);
+        radiusEdit.setEnabled(true);
+        radiusEdit.setFocusable(true);
+
+
+    }
+
+    public void toggleClick(View v){
+        if(!locType.isChecked()) {
+            wifiID.setEnabled(false);
+            wifiID.setFocusable(false);
+            latitudeEdit.setEnabled(true);
+            latitudeEdit.setFocusable(true);
+            longitudeEdit.setEnabled(true);
+            longitudeEdit.setFocusable(true);
+            radiusEdit.setEnabled(true);
+            radiusEdit.setFocusable(true);
+        } else {
+            wifiID.setEnabled(true);
+            wifiID.setFocusable(true);
+            latitudeEdit.setEnabled(false);
+            latitudeEdit.setFocusable(false);
+            longitudeEdit.setEnabled(false);
+            longitudeEdit.setFocusable(false);
+            radiusEdit.setEnabled(false);
+            radiusEdit.setFocusable(false);
+        }
     }
 
     private void updateValuesFromBundle(Bundle savedInstanceState) {
@@ -297,18 +342,31 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         EditText editLatitude = (EditText) findViewById(R.id.latitude);
         EditText editLongitude = (EditText) findViewById(R.id.longitude);
         EditText editRadius = (EditText) findViewById(R.id.radius);
+        EditText editWifi = (EditText) findViewById(R.id.wifi_id);
 
 
         String locName = editLocationName.getText().toString();
         String locLatitude = editLatitude.getText().toString().substring(6);
         String locLongitude = editLongitude.getText().toString().substring(6);
         String locRadius = editRadius.getText().toString();
+        String locWifi = editWifi.getText().toString();
+
+        ToggleButton tgBtn = (ToggleButton) findViewById(R.id.loc_type);
 
 
-        if (locName != null && locLatitude != null && locLongitude != null && locRadius != null) {
-            server.saveNewLocation(locName, locLatitude, locLongitude, locRadius);
-            Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
-            startActivity(intent);
+        if(!tgBtn.isChecked()) {
+            if (locName != null && locLatitude != null && locLongitude != null && locRadius != null) {
+                server.saveNewLocationGPS(locName, locLatitude, locLongitude, locRadius);
+                Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
+                startActivity(intent);
+            }
+        } else {
+            if (locName != null && locWifi != null) {
+                server.saveNewLocationWifi(locName, locWifi);
+                Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
+                startActivity(intent);
+            }
+
         }
 
     }

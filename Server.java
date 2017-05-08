@@ -91,11 +91,21 @@ public class Server implements Runnable {
 						oos.writeObject(keys);
 						break;
 						
-					case "savenewlocation":
+					case "savenewlocationGPS":
 						String[] locval = vs[1].split(SEPARATOR);
-						oos.writeObject(saveNewLocation(locval[0], locval[1], locval[2], locval[3]));
+						oos.writeObject(saveNewLocationGPS(locval[0], locval[1], locval[2], locval[3]));
 						break;
-						
+
+					case "savenewlocationWifi":
+						locval = vs[1].split(SEPARATOR);
+						oos.writeObject(saveNewLocationWifi(locval[0], locval[1]));
+						break;
+
+					case "getlocationdetails":
+						String locDetailsName = vs[1];
+						oos.writeObject(getLocationDetails(locDetailsName));
+						break;
+
 					case "getexistinglocations":
 						ArrayList<String[]> locationList = getExistingLocations();
 						oos.writeObject(locationList);
@@ -276,7 +286,7 @@ public class Server implements Runnable {
 		return userKeys;
     }
    
-    public boolean saveNewLocation(String locName, String locLatitude, String locLongitude, String locRadius){
+    public boolean saveNewLocationGPS(String locName, String locLatitude, String locLongitude, String locRadius){
     	try {
 			File locationsFile = new File("files/locations.txt");
 			if (!locationsFile.exists()) {
@@ -288,9 +298,60 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			System.out.println(e);
 		}
-		System.out.println(time() + "Created Location <" + locName + ": " + locLatitude + ", " + locLongitude + ", radius: " + locRadius + ">\n");
+		System.out.println(time() + "Created Location <" + locName + ": " + locLatitude + ", " + locLongitude + ", " + locRadius + ">\n");
 		return true;
     }
+
+    public boolean saveNewLocationWifi(String locName, String ssid){
+    	try {
+			File locationsFile = new File("files/locations.txt");
+			if (!locationsFile.exists()) {
+				locationsFile.createNewFile();
+			}
+			PrintWriter locWriter = new PrintWriter(new FileWriter(locationsFile, true));
+			locWriter.println(locName + SEPARATOR + ssid);
+			locWriter.close();
+		} catch (IOException e) {
+			System.out.println(e);
+		}
+		System.out.println(time() + "Created Location <" + locName + ": " + ssid + ">\n");
+		return true;
+    }
+	
+	public String[] getLocationDetails(String locDetailsName) {
+		File locationsFile = new File("files/locations.txt");
+		String[] locDetailsGPS = new String[4];
+		String[] locDetailsWifi = new String[2];
+		Boolean isGPS = false;
+		try {
+			Scanner locationsFileScanner = new Scanner(locationsFile);
+			while (locationsFileScanner.hasNext()) {
+				String wholeLine = locationsFileScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				if (arr[0].equals(locDetailsName)) {
+					if (arr.length == 4) {
+						isGPS = true;
+						locDetailsGPS[0] = locDetailsName;
+						locDetailsGPS[1] = arr[1];
+						locDetailsGPS[2] = arr[2];
+						locDetailsGPS[3] = arr[3];						
+					} else {
+						locDetailsWifi[0] = locDetailsName;
+						locDetailsWifi[1] = arr[1];
+					}
+				}
+			}
+			locationsFileScanner.close();
+			System.out.println(time() + "Location details: + " + locDetailsName + "\n");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (isGPS) {
+			return locDetailsGPS;
+		} else {
+			return locDetailsWifi;
+		}
+	}
 
     public ArrayList<String[]> getExistingLocations(){
     	File locationsFile = new File("files/locations.txt");
