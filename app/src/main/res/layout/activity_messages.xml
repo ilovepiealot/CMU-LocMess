@@ -16,6 +16,18 @@
         android:paddingTop="@dimen/appbar_padding_top"
         android:theme="@style/AppTheme.AppBarOverlay">
 
+        <Button
+            android:id="@+id/request_location_updates_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/request_location_updates" />
+
+        <Button
+            android:id="@+id/remove_location_updates_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/remove_location_updates" />
+
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"

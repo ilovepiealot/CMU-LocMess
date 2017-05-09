@@ -26,7 +26,7 @@
         <activity android:name=".Activities.OutboxActivity" />
         <activity android:name=".Activities.ViewMessageActivity" />
         <activity android:name=".Activities.ViewLocationActivity" />
-
+        <service android:name=".Services.LocationUpdatesService" />
         <activity
             android:name=".Activities.MessagesActivity"
             android:label="@string/messages"
