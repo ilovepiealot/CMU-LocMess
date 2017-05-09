@@ -35,6 +35,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -42,7 +43,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.ArrayList;
+
 import grupo19.locmess19.Activities.MessagesActivity;
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
 /**
@@ -78,14 +82,14 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     /**
      * The desired interval for location updates. Inexact. Updates may be more or less frequent.
      */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 2000;
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
 
     /**
      * The fastest rate for active location updates. Updates will never be more frequent
      * than this value.
      */
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 4;
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
     /**
      * The identifier for the notification displayed for the foreground service.
@@ -118,6 +122,9 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
      */
     private Location mLocation;
 
+    private ServerCommunication server;
+    ArrayList<String[]> locationList;
+
     public LocationUpdatesService() {
     }
 
@@ -135,6 +142,9 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
         handlerThread.start();
         mServiceHandler = new Handler(handlerThread.getLooper());
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        server = new ServerCommunication("10.0.2.2", 11113);
+
     }
 
     @Override
@@ -304,14 +314,46 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
         mLocation = location;
 
-        // Notify anyone listening for broadcasts about the new location.
-        Intent intent = new Intent(ACTION_BROADCAST);
-        intent.putExtra(EXTRA_LOCATION, location);
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        if (location != null) {
+            locationList = server.getExistingLocations();
+            for (String[] locServer : locationList) {
+                if (locServer.length == 4) {
+                    if(checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
+                        // Notify anyone listening for broadcasts about the new location.
+                        Intent intent = new Intent(ACTION_BROADCAST);
+                        intent.putExtra(EXTRA_LOCATION, location);
+                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
-        // Update notification content if running as a foreground service.
-        if (serviceIsRunningInForeground(this)) {
-            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                        // Update notification content if running as a foreground service.
+                        if (serviceIsRunningInForeground(this)) {
+                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    public Boolean checkLocationInRadius(Location location, String Latitude, String Longitude, String Radius) {
+
+        float[] distance = new float[2];
+        Float radius = Float.parseFloat(Radius);
+        double latitude = Double.parseDouble(Latitude);
+        double longitude = Double.parseDouble(Longitude);
+
+        Location.distanceBetween(latitude, longitude,
+                location.getLatitude(), location.getLongitude(), distance);
+
+        if( distance[0] > radius){
+
+            Log.e(TAG, "Distance: " + String.valueOf(distance[0]));
+            Log.e(TAG, "Radius: " + String.valueOf(radius));
+            return false;
+        } else {
+            Log.e(TAG, "Distance: " + String.valueOf(distance[0]));
+            Log.e(TAG, "Radius: " + String.valueOf(radius));
+            return true;
         }
     }
 
