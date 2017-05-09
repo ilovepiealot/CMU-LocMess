@@ -55,6 +55,11 @@ public class MessagesActivity extends AppCompatActivity implements
     // Tracks the bound state of the service.
     private boolean mBound = false;
 
+    // UI elements.
+    private Button mRequestLocationUpdatesButton;
+
+    private boolean check = false;
+
     // Monitors the state of the connection to the service.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -89,6 +94,7 @@ public class MessagesActivity extends AppCompatActivity implements
     private ViewPager mViewPager;
     private String username;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,17 +114,9 @@ public class MessagesActivity extends AppCompatActivity implements
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }); */
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
+
 
     }
 
@@ -128,13 +126,28 @@ public class MessagesActivity extends AppCompatActivity implements
         PreferenceManager.getDefaultSharedPreferences(this)
                 .registerOnSharedPreferenceChangeListener(this);
 
+        mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button);
+
+        mRequestLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!check) {
+                    check = true;
+                    mService.requestLocationUpdates();
+                } else {
+                    check = false;
+                    mService.removeLocationUpdates();
+                }
+            }
+        });
+
+        // Restore the state of the buttons when the activity (re)launches.
+        setButtonsState(Utils.requestingLocationUpdates(this));
+
         // Bind to the service. If the service is in foreground mode, this signals to the service
         // that since this activity is in the foreground, the service can exit foreground mode.
         bindService(new Intent(this, LocationUpdatesService.class), mServiceConnection,
                 Context.BIND_AUTO_CREATE);
-
-        // mService.removeLocationUpdates();
-        // mService.requestLocationUpdates();
     }
 
     @Override
@@ -183,10 +196,18 @@ public class MessagesActivity extends AppCompatActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         // Update the buttons state depending on whether location updates are being requested.
         if (s.equals(Utils.KEY_REQUESTING_LOCATION_UPDATES)) {
-
+            setButtonsState(sharedPreferences.getBoolean(Utils.KEY_REQUESTING_LOCATION_UPDATES,
+                    false));
         }
     }
 
+    private void setButtonsState(boolean requestingLocationUpdates) {
+        if (requestingLocationUpdates) {
+            // mRequestLocationUpdatesButton.setEnabled(false);
+        } else {
+            mRequestLocationUpdatesButton.setEnabled(true);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
