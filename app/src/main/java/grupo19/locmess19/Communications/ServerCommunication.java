@@ -125,7 +125,7 @@ public class ServerCommunication {
         return registered;
     }
 
-    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username) {
+    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String starttime, final String endtime) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -142,7 +142,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username);
+                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + starttime + SEPARATOR + endtime);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");

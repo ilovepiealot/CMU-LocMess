@@ -48,10 +48,13 @@ public class ViewMessageActivity extends AppCompatActivity  {
         TextView location = (TextView) findViewById(R.id.location);
         TextView sender = (TextView) findViewById(R.id.sender);
 
+        String STARTdateANDtime = receivedMessage[2] + "-" + receivedMessage[7];
+        String ENDdateANDtime = receivedMessage[3] + "-" + receivedMessage[8];
+
         message_title.setText(receivedMessage[0]);
         messageContent.setText(receivedMessage[1]);
-        start_date.setText(receivedMessage[2]);
-        end_date.setText(receivedMessage[3]);
+        start_date.setText(STARTdateANDtime);
+        end_date.setText(ENDdateANDtime);
         location.setText(receivedMessage[4]);
         sender.setText(receivedMessage[5]);
 

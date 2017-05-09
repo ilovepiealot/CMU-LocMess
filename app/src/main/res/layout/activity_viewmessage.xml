@@ -35,7 +35,7 @@
         android:inputType="text|textMultiLine|textCapSentences"
         android:layout_below="@+id/message_title"
         android:layout_centerHorizontal="true"
-        android:maxLines = "15"
+        android:maxLines = "10"
         android:scrollbars = "vertical"/>
 
     <Button

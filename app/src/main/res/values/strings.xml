@@ -30,6 +30,17 @@
         <item>IST</item>
     </string-array>
 
+    <!-- Keys Menus -->
+    <string-array name="keys">
+        <item>cinema</item>
+        <item>desporto</item>
+        <item>teatro</item>
+        <item>teatro2</item>
+        <item>teasfgtro</item>
+        <item>teatrgro</item>
+        <item>teatsgfrro</item>
+    </string-array>
+
 
     <!-- Messages Menus -->
     <string name="message_title">Message Title</string>

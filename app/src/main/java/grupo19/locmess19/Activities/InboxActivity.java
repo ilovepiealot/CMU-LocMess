@@ -70,7 +70,7 @@ public class InboxActivity extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String title=(String)parent.getItemAtPosition(position);
                 extra = title.split(":");
-                Toast.makeText(InboxActivity.this, extra[0], Toast.LENGTH_SHORT).show();
+                //Toast.makeText(InboxActivity.this, extra[0], Toast.LENGTH_SHORT).show();
                 //if (position == 1){
                     Intent i = new Intent(InboxActivity.this, ViewMessageActivity.class);
                     i.putExtra("ID", extra[0]);

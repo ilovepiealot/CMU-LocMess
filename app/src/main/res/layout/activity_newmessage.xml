@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
+    android:windowSoftInputMode="adjustNothing"
+    android:fitsSystemWindows="true"
     tools:context="grupo19.locmess19.Activities.NewMessageActivity">
+
 
     <EditText
         android:id="@+id/message_title"
@@ -146,7 +149,26 @@
         android:ems="10"
         android:background="@drawable/border"
         android:inputType="text|textMultiLine|textCapSentences"
-        android:hint="Write your message" />
+        android:hint="Write your message"
+        android:maxLines = "5" />
+    <Button
+        android:id="@+id/whitelist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/text_start_time"
+        android:layout_alignLeft="@+id/text_start_time"
+        android:layout_alignStart="@+id/text_start_time"
+        android:layout_marginBottom="19dp"
+        android:text="Whitelist" />
+
+    <TextView
+        android:id="@+id/text_whitelist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/whitelist"
+        android:layout_toLeftOf="@+id/message_title"
+        android:layout_toStartOf="@+id/message_title"
+        android:text="Whitelist" />
 
 
 </RelativeLayout>
