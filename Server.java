@@ -154,6 +154,14 @@ public class Server implements Runnable {
 				if (username.equals(arr[0]) && password.equals(arr[1])) {
 					logged = true;
 					System.out.println(res + "YES!");
+					
+					messagesFile = new File("files/messages_" + username + ".txt");
+					try{
+						if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
+					} catch (IOException e){
+						System.out.println(e);
+					}
+					
 					break;
 				} else
 					System.out.println(res + "NO!");
@@ -411,12 +419,12 @@ public class Server implements Runnable {
     public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString){
 		
 		boolean created = true;
-		messagesFile = new File("files/messages_" + username2 + ".txt");
+		/*messagesFile = new File("files/messages_" + username2 + ".txt");
 		try{
 			if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
 		} catch (IOException e){
 			System.out.println(e);
-		}
+		}*/
 		PrintWriter messagesWriter;
 		PrintWriter messagesGlobalWriter;
 		
