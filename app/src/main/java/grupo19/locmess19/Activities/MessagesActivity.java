@@ -18,6 +18,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.Fragments.Locations;
 import grupo19.locmess19.Fragments.MessagesMenu;
 import grupo19.locmess19.Fragments.ProfilesFragment;
@@ -53,7 +57,8 @@ public class MessagesActivity extends AppCompatActivity implements
 
     // UI elements.
     private Button mRequestLocationUpdatesButton;
-    private Button mRemoveLocationUpdatesButton;
+
+    private boolean check = false;
 
     // Monitors the state of the connection to the service.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -89,6 +94,7 @@ public class MessagesActivity extends AppCompatActivity implements
     private ViewPager mViewPager;
     private String username;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,17 +114,9 @@ public class MessagesActivity extends AppCompatActivity implements
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }); */
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
+
 
     }
 
@@ -129,19 +127,17 @@ public class MessagesActivity extends AppCompatActivity implements
                 .registerOnSharedPreferenceChangeListener(this);
 
         mRequestLocationUpdatesButton = (Button) findViewById(R.id.request_location_updates_button);
-        mRemoveLocationUpdatesButton = (Button) findViewById(R.id.remove_location_updates_button);
 
         mRequestLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!check) {
+                    check = true;
                     mService.requestLocationUpdates();
-            }
-        });
-
-        mRemoveLocationUpdatesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mService.removeLocationUpdates();
+                } else {
+                    check = false;
+                    mService.removeLocationUpdates();
+                }
             }
         });
 
@@ -195,6 +191,7 @@ public class MessagesActivity extends AppCompatActivity implements
         }
     }
 
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         // Update the buttons state depending on whether location updates are being requested.
@@ -206,11 +203,9 @@ public class MessagesActivity extends AppCompatActivity implements
 
     private void setButtonsState(boolean requestingLocationUpdates) {
         if (requestingLocationUpdates) {
-            mRequestLocationUpdatesButton.setEnabled(false);
-            mRemoveLocationUpdatesButton.setEnabled(true);
+            // mRequestLocationUpdatesButton.setEnabled(false);
         } else {
             mRequestLocationUpdatesButton.setEnabled(true);
-            mRemoveLocationUpdatesButton.setEnabled(false);
         }
     }
 
