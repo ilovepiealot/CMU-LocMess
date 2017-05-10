@@ -55,7 +55,7 @@ public class CustomTitlesOutboxAdapter extends ArrayAdapter<String> {
                 username = sharedPreferences.getString("loggedUser", "");
 
                 //do something
-                //boolean deleted = server.deleteMessage(receivedTitles.get(position), username); //TODO DELETE MESSAGE ON SERVER
+                boolean deleted = server.deleteMessage(receivedTitles.get(position), username); //TODO DELETE MESSAGE ON SERVER
                 receivedTitles.remove(position);
                 notifyDataSetChanged();
             }

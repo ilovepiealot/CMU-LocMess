@@ -138,9 +138,7 @@ public class Server implements Runnable {
 						break;
 						
 					case "deleteMessage":
-						mes = line.split(SEPARATOR);
-						messageID++;
-						oos.writeObject(deleteMessage(mes[1], mes[2]));
+						oos.writeObject(deleteMessage(vs[1], vs[2]));
 						break;
 
 					case "getexistingmessages":
@@ -543,51 +541,55 @@ public class Server implements Runnable {
 	}
 	
 	public boolean deleteMessage(String messageDeleteID, String username){
-		File messageFile = new File("files/messages.txt");
-		File messageFileTemp = new File("files/messagesTemp.txt");
-		File messageGlobalFile = new File("files/message_" + username + ".txt");
-		File messageGlobalFileTemp = new File("files/messageTemp_" + username + ".txt");
+		//File messageFile = new File("files/messages.txt");
+		//File messageGlobalFile = new File("files/messages_" + username + ".txt");
+		File messagesFileTemp = new File("files/messagesTemp_" + username + ".txt");
+		File messagesGlobalFileTemp = new File("files/messagesTemp.txt");
 		
 		Writer writer;
 		Writer writerGlobal;
 		boolean check = false;
 		try {
-			writer = new BufferedWriter(new FileWriter(messageFileTemp));
-			Scanner messagesFileScanner = new Scanner(messageFile);
-			writerGlobal = new BufferedWriter(new FileWriter(messageGlobalFileTemp));
-			Scanner messageGlobalFileScanner = new Scanner(messageGlobalFile);
+			writer = new BufferedWriter(new FileWriter(messagesFileTemp));
+			Scanner messagesFileScanner = new Scanner(messagesFile);
+			writerGlobal = new BufferedWriter(new FileWriter(messagesGlobalFileTemp));
+			Scanner messagesGlobalFileScanner = new Scanner(messagesGlobalFile);
 			
 			while (messagesFileScanner.hasNext()) {
 				String wholeLine = messagesFileScanner.nextLine();
+				if (! (wholeLine.isEmpty())){
 				String[] arr = wholeLine.split(SEPARATOR);
-				if (arr[0].equals(messageDeleteID)) {
-					System.out.println(messageDeleteID);
-					System.out.println(arr[0]);
-					continue;
+				if (arr[6].equals(messageDeleteID)) {
+						System.out.println(messageDeleteID);
+						System.out.println(arr[0]);
+						continue;
+					}
+					writer.write(wholeLine + System.getProperty("line.separator"));
 				}
-				writer.write(wholeLine + System.getProperty("line.separator"));
 			}
 			
-			while (messageGlobalFileScanner.hasNext()) {
-				String wholeLine = messageGlobalFileScanner.nextLine();
-				String[] arr = wholeLine.split(SEPARATOR);
-				if (arr[0].equals(messageDeleteID)) {
-					System.out.println(messageDeleteID);
-					System.out.println(arr[0]);
-					continue;
+			while (messagesGlobalFileScanner.hasNext()) {
+				String wholeLine = messagesGlobalFileScanner.nextLine();
+				if (! (wholeLine.isEmpty())){
+					String[] arr = wholeLine.split(SEPARATOR);
+					if (arr[6].equals(messageDeleteID)) {
+						System.out.println(messageDeleteID);
+						System.out.println(arr[0]);
+						continue;
+					}
+					writerGlobal.write(wholeLine + System.getProperty("line.separator"));
 				}
-				writerGlobal.write(wholeLine + System.getProperty("line.separator"));
 			}
 			
 			messagesFileScanner.close();
-			messageGlobalFileScanner.close();
+			messagesGlobalFileScanner.close();
 			
 			writer.close(); 
 			writerGlobal.close();
 			
-			messageFile.delete();
-			messageGlobalFile.delete();
-			if (messageFileTemp.renameTo(messageFile) && messageGlobalFileTemp.renameTo(messageGlobalFile)){
+			messagesFile.delete();
+			messagesGlobalFile.delete();
+			if (messagesFileTemp.renameTo(messagesFile) && messagesGlobalFileTemp.renameTo(messagesGlobalFile)){
 				check = true;
 			}
 			System.out.println(time() + "Deleted message: <" + messageDeleteID + "> : " + check + "\n");
