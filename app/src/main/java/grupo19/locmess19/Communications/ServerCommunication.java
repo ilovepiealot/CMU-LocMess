@@ -168,6 +168,48 @@ public class ServerCommunication {
         return created;
     }
 
+    public boolean saveMessageToInbox(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String id, final String starttime, final String endtime) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + id + SEPARATOR + starttime + SEPARATOR + endtime);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        created = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(created));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return created;
+    }
+
     public Map<String, String> getTitles(final String username, final String box) {
 
         try {

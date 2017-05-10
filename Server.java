@@ -125,7 +125,10 @@ public class Server implements Runnable {
 						messageIDString = String.valueOf(messageID);
 						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString, mes[7], mes[8]));
 						break;
-						
+					case "savemessagetoinbox":
+						mes = line.split(SEPARATOR);
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], mes[7], mes[8], mes[9]));
+						break;
 					case "getTitles":
 						oos.writeObject(getTitles(vs[1], vs[2]));
 						break;
@@ -453,6 +456,22 @@ public class Server implements Runnable {
 		return created;
     }
 
+        public boolean saveMessageToInbox(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String starttime, String endtime){
+		
+		boolean created = true;
+		PrintWriter messagesWriter;
+
+			try {
+				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
+				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + starttime + SEPARATOR + endtime);
+				messagesWriter.close();
+			} catch (IOException e) {
+				System.out.println(e);
+			}
+		//oos.writeObject(created);
+		return created;
+    } 
+
 	public HashMap<String, String> getTitles(String username, String box) {
 		HashMap<String, String> messageTitles = new HashMap<String,String>();
 		messagesFile = new File("files/messages_" + username + ".txt"); 		//caso sejam titulos da outbox apenas é lido o ficheiro do utilizador
@@ -480,8 +499,8 @@ public class Server implements Runnable {
 			try {
 				Scanner	messagesScanner = new Scanner(messagesFile);
 				Scanner messagesGlobalScanner = new Scanner(messagesGlobalFile);
-				while (messagesGlobalScanner.hasNext()) {
-					String wholeLine = messagesGlobalScanner.nextLine();
+				while (messagesScanner.hasNext()) {
+					String wholeLine = messagesScanner.nextLine();
 					if (! (wholeLine.isEmpty())){
 						String[] arr = wholeLine.split(SEPARATOR);
 						if (!(username.equals(arr[5]))){					//são seleccionadas as mensagens que não foram criadas pelo utilizador corrente

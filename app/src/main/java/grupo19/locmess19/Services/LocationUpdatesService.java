@@ -47,6 +47,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 
+import grupo19.locmess19.Activities.InboxActivity;
 import grupo19.locmess19.Activities.MessagesActivity;
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
@@ -131,6 +132,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     ArrayList<String[]> messageList;
     ArrayList<String[]> locationList;
 
+    public String[] messageStringArray;
 
     public String username;
 
@@ -278,8 +280,10 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // The PendingIntent to launch activity.
+        Intent newMessageIntent = new Intent(this, InboxActivity.class);
+        newMessageIntent.putExtra("messageStringArray", messageStringArray);
         PendingIntent activityPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MessagesActivity.class), 0);
+                newMessageIntent, 0);
 
         return new NotificationCompat.Builder(this)
                 .addAction(R.drawable.cast_album_art_placeholder, getString(R.string.launch_activity),
@@ -338,6 +342,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                             if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
                                 Log.e(TAG, "location check");
                                 String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                messageStringArray = messagesServer;
                                 Log.e(TAG, finalMessage);
                                 // Notify anyone listening for broadcasts about the new location.
                                 Intent intent = new Intent(ACTION_BROADCAST);
