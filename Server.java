@@ -139,6 +139,11 @@ public class Server implements Runnable {
 						messageID++;
 						oos.writeObject(deleteMessage(mes[1], mes[2]));
 						break;
+
+					case "getexistingmessages":
+						ArrayList<String[]> messageList = getExistingMessages();
+						oos.writeObject(messageList);
+						break;
 											
 					default:
 						break;	
@@ -572,6 +577,27 @@ public class Server implements Runnable {
 		}
 		return check;
 	}
+
+    public ArrayList<String[]> getExistingMessages(){
+    	File messagesFile = new File("files/messages.txt");
+		Scanner messagesFileScanner;
+		ArrayList<String[]> messagesList = new ArrayList<String[]>();
+		try {
+			messagesFileScanner = new Scanner(messagesFile);
+			while (messagesFileScanner.hasNext()) {
+				String wholeLine = messagesFileScanner.nextLine();
+				if (!(wholeLine.isEmpty())){
+					String[] arr = wholeLine.split(SEPARATOR);
+					messagesList.add(arr);
+				}
+			}
+			messagesFileScanner.close();
+			System.out.println(time() + "Get all available messages from the server\n");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return messagesList;
+    }
 
 	public static String time(){
 		return DATE_FORMAT.format(new Date()) + " - ";

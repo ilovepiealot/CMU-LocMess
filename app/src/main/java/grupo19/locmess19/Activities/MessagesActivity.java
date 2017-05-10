@@ -183,10 +183,14 @@ public class MessagesActivity extends AppCompatActivity implements
     private class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Location location = intent.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION);
-            if (location != null) {
-                Toast.makeText(MessagesActivity.this, Utils.getLocationText(location),
-                        Toast.LENGTH_SHORT).show();
+            // Location location = intent.getParcelableExtra(LocationUpdatesService.EXTRA_LOCATION);
+            String finalMessage = intent.getStringExtra(LocationUpdatesService.EXTRA_STRING);
+            Log.e(TAG, finalMessage);
+            if (finalMessage != null) {
+                /* Toast.makeText(MessagesActivity.this, Utils.getLocationText(location),
+                        Toast.LENGTH_SHORT).show(); */
+                Toast.makeText(MessagesActivity.this,
+                        finalMessage, Toast.LENGTH_SHORT).show();
             }
         }
     }

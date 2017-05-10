@@ -23,6 +23,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Binder;
@@ -30,6 +31,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -74,8 +76,11 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     public static final String ACTION_BROADCAST = PACKAGE_NAME + ".broadcast";
 
     public static final String EXTRA_LOCATION = PACKAGE_NAME + ".location";
+    public static final String EXTRA_STRING = PACKAGE_NAME + "STRING";
+
     private static final String EXTRA_STARTED_FROM_NOTIFICATION = PACKAGE_NAME +
             ".started_from_notification";
+
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -123,7 +128,11 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     private Location mLocation;
 
     private ServerCommunication server;
+    ArrayList<String[]> messageList;
     ArrayList<String[]> locationList;
+
+
+    public String username;
 
     public LocationUpdatesService() {
     }
@@ -314,21 +323,36 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
         mLocation = location;
 
-        if (location != null) {
-            locationList = server.getExistingLocations();
-            for (String[] locServer : locationList) {
-                if (locServer.length == 4) {
-                    if(checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
-                        // Notify anyone listening for broadcasts about the new location.
-                        Intent intent = new Intent(ACTION_BROADCAST);
-                        intent.putExtra(EXTRA_LOCATION, location);
-                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        username = sharedPreferences.getString("loggedUser", "");
 
-                        // Update notification content if running as a foreground service.
-                        if (serviceIsRunningInForeground(this)) {
-                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+        if (location != null) {
+            messageList = server.getExistingMessages();
+            locationList = server.getExistingLocations();
+            for (String[] messagesServer : messageList) {
+                if (!messagesServer[5].equals(username)) {
+                    Log.e(TAG, "username is different");
+                    for (String[] locServer : locationList) {
+                        if (locServer[0].equals(messagesServer[4])) {
+                            Log.e(TAG, "location found in list");
+                            if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
+                                Log.e(TAG, "location check");
+                                String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                Log.e(TAG, finalMessage);
+                                // Notify anyone listening for broadcasts about the new location.
+                                Intent intent = new Intent(ACTION_BROADCAST);
+                                // intent.putExtra(EXTRA_LOCATION, location);
+                                intent.putExtra(EXTRA_STRING, finalMessage);
+                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                                // Update notification content if running as a foreground service.
+                                if (serviceIsRunningInForeground(this)) {
+                                    mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                }
+                                break;
+                            }
                         }
-                        break;
+
                     }
                 }
             }

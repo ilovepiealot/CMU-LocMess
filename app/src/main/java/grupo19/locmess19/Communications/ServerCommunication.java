@@ -33,6 +33,7 @@ public class ServerCommunication {
     private ArrayList<SimpleEntry<String,String>> userKeys = null;
     private Map<String,String> messageTitles = null;
     private ArrayList<String[]> locationList = null;
+    private ArrayList<String[]> messageList = null;
     private String[] locationDetails = null;
 
 
@@ -578,7 +579,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public boolean deleteMessage(final String id, final String username) {
+    public ArrayList<String[]> getExistingMessages() {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -586,7 +587,6 @@ public class ServerCommunication {
                 public void run() {
 
                     Socket s = null;
-
                     try {
 
                         s = new Socket(ip, port);
@@ -594,12 +594,9 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
+                        oos.writeObject("getexistingmessages");
 
-                        oos.writeObject("deleteMessage:" + id + SEPARATOR + username);
-                        //blocks
-                        // String a = (String) ois.readObject();
-                        destroyed = (String.valueOf(ois.readObject())).equals("true");
-                        Log.d(TAG, String.valueOf(destroyed));
+                        messageList = (ArrayList<String[]>) ois.readObject();
 
                         oos.writeObject("quit");
 
@@ -617,7 +614,7 @@ public class ServerCommunication {
             e.printStackTrace();
         }
 
-        return destroyed;
+        return messageList;
     }
 
     private Object[] createCommunication(Socket s) {
