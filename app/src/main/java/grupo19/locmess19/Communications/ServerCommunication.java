@@ -578,6 +578,48 @@ public class ServerCommunication {
         return created;
     }
 
+    public boolean deleteMessage(final String id, final String username) {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+
+                        oos.writeObject("deleteMessage:" + id + SEPARATOR + username);
+                        //blocks
+                        // String a = (String) ois.readObject();
+                        destroyed = (String.valueOf(ois.readObject())).equals("true");
+                        Log.d(TAG, String.valueOf(destroyed));
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return destroyed;
+    }
+
     private Object[] createCommunication(Socket s) {
 
         try {

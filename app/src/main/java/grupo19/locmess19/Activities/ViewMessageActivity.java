@@ -60,6 +60,7 @@ public class ViewMessageActivity extends AppCompatActivity  {
 
     }
     public void return_click(View v){
-        startActivity(new Intent(ViewMessageActivity.this, InboxActivity.class));
+        this.finish();
+        //startActivity(new Intent(ViewMessageActivity.this, InboxActivity.class));
     }
 }

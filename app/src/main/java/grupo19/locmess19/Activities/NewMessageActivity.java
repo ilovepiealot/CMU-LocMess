@@ -18,12 +18,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
@@ -206,7 +204,8 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     }
 
     public void cancel_click(View v){
-        startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
+        this.finish();
+        //startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
     }
 
     private void updateTime(){
@@ -282,7 +281,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         String end_time = ((TextView) findViewById(R.id.text_end_time)).getText().toString();
         String location = spinner.getSelectedItem().toString();
 
-        if (message_title.matches("") || messageContent.matches("") || start_date.matches("") || end_date.matches("") || message_title.matches("") || location.matches("") || start_time.matches("") || end_time.matches("") ) {
+        if (message_title.matches("") || messageContent.matches("") || start_date.matches("Start Date") || end_date.matches("End Date") || location.matches("Please pick an existing location") || start_time.matches("Start Time") || end_time.matches("End Time") ) {
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
 
         } else {
