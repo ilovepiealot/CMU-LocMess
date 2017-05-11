@@ -128,7 +128,7 @@ public class Server implements Runnable {
 						mes = line.split(SEPARATOR);
 						messageID++;
 						messageIDString = String.valueOf(messageID);
-						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString));
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString, mes[7]));
 						break;
 					case "savemessagetoinbox":
 						mes = line.split(SEPARATOR);
@@ -452,7 +452,7 @@ public class Server implements Runnable {
 		
     }
         
-    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString){
+    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String keys){
 		
 		boolean created = true;
 		/*messagesFile = new File("files/messages_" + username2 + ".txt");
@@ -466,10 +466,10 @@ public class Server implements Runnable {
 		
 			try {
 				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + keys);
 				messagesWriter.close();
 				messagesGlobalWriter = new PrintWriter(new FileWriter(messagesGlobalFile, true));
-				messagesGlobalWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+				messagesGlobalWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + keys);
 				messagesGlobalWriter.close();
 			} catch (IOException e) {
 				System.out.println(e);

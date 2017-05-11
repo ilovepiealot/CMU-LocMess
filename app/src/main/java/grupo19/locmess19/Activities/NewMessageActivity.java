@@ -22,6 +22,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
+
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
@@ -45,15 +47,18 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
     private Button whitelist_keys;
     private TextView whitelist_keys_selected;
+    private Button blacklist_keys;
+    private TextView blacklist_keys_selected;
 
     String receivedLocationsTitlesString;
     //String[] receivedLocationsTitles;
     List<String> receivedLocationsTitles = new ArrayList<>();
     ArrayList<String[]> receivedLocations = new ArrayList<>();
 
-    String[] keys;
+    String[] keys;                                //YOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
     boolean[] checkedKeys;
     ArrayList<Integer>  keysItems = new ArrayList<>();
+    private Map<String, String> getKeys;
 
     private ServerCommunication server;
 
@@ -78,7 +83,19 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
         createnewmessage = (Button) findViewById(R.id.createnewmessage);
     //POPULATE THE KEYS
-        keys = getResources().getStringArray(R.array.keys);
+        getKeys = server.getAllKeys();
+        ArrayList<String> receivedKeys = new ArrayList<>();
+       //receives map of titles and filters both key and value and adds to array list
+        for (Map.Entry<String,String> entry : getKeys.entrySet()) {
+            String field = entry.getKey();
+            String fieldValue = entry.getValue();
+            String womboCombo = (field + " -> " + fieldValue);
+            receivedKeys.add(womboCombo);
+
+        }
+    //converts arraylist to string[]
+        keys = new String[receivedKeys.size()];
+        keys = receivedKeys.toArray(keys);
         checkedKeys = new boolean[keys.length];
     //SPINNER FOR LOCATIONS
         spinner = (Spinner) findViewById(R.id.location_selector);
@@ -99,7 +116,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
    //BUTTON FOR KEYS SELECTION
         whitelist_keys = (Button) findViewById(R.id.whitelist);
         whitelist_keys_selected = (TextView) findViewById(R.id.text_whitelist);
-    //LISTENER FOR KEYS SELECTION
+        blacklist_keys = (Button) findViewById(R.id.blacklist);
+        blacklist_keys_selected = (TextView) findViewById(R.id.text_blacklist);
+    //LISTENER FOR WHITELIST KEYS SELECTION
         whitelist_keys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,9 +130,13 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
                         if(isChecked){
                             if(!(keysItems.contains(position))){
                                 keysItems.add(position);
-                            } else if (keysItems.contains(position)){
+                                checkedKeys[position] = true;
+                            } /*else if (keysItems.contains(position)){
                                 keysItems.remove(position);
-                            }
+                            }*/
+                        } else {
+                            checkedKeys[position] = false;
+                            keysItems.remove(position);
                         }
                     }
                 });
@@ -125,7 +148,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
                         for (int i = 0; i < keysItems.size(); i++){
                             item = item + keys[keysItems.get(i)];
                             if (i != keysItems.size() - 1) {
-                                item = item + ", ";
+                                item = item + "#KEY#";
                             }
                         }
                         whitelist_keys_selected.setText(item);
@@ -148,6 +171,63 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
                     }
                 });
                 AlertDialog kDialog = keyBuilder.create();
+                kDialog.show();
+            }
+        });
+
+        //LISTENER FOR BLACKLIST KEYS SELECTION
+        blacklist_keys.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder keyBuilder2 = new AlertDialog.Builder(NewMessageActivity.this);
+                keyBuilder2.setTitle("Choose the desired whitelist keys.");
+                keyBuilder2.setMultiChoiceItems(keys, checkedKeys, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int position, boolean isChecked) {
+                        if(isChecked){
+                            if(!(keysItems.contains(position))){
+                                keysItems.add(position);
+                                checkedKeys[position] = true;
+                            } /*else if (keysItems.contains(position)){
+                                keysItems.remove(position);
+                            }*/
+                        } else {
+                            checkedKeys[position] = false;
+                            keysItems.remove(position);
+                        }
+                    }
+                });
+                keyBuilder2.setCancelable(false);
+                keyBuilder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String item = "";
+                        for (int i = 0; i < keysItems.size(); i++){
+                            item = item + keys[keysItems.get(i)];
+                            if (i != keysItems.size() - 1) {
+                                item = item + "#KEY#";
+                            }
+                        }
+                        blacklist_keys_selected.setText(item);
+                    }
+                });
+                keyBuilder2.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                keyBuilder2.setNeutralButton("Clear All", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for (int i = 0; i< checkedKeys.length; i++){
+                            checkedKeys[i] = false;
+                            keysItems.clear();
+                            blacklist_keys_selected.setText("");
+                        }
+                    }
+                });
+                AlertDialog kDialog = keyBuilder2.create();
                 kDialog.show();
             }
         });
@@ -280,15 +360,14 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
         String messageContent = ((TextView) findViewById(R.id.messageContent)).getText().toString();
         String start_date = String.valueOf(dateBegin.getTimeInMillis());
         String end_date = String.valueOf(dateEnd.getTimeInMillis());
-        String start_time = ((TextView) findViewById(R.id.text_start_time)).getText().toString();
-        String end_time = ((TextView) findViewById(R.id.text_end_time)).getText().toString();
         String location = spinner.getSelectedItem().toString();
+        String keys = ((TextView) findViewById(R.id.text_whitelist)).getText().toString();
 
-        if (message_title.matches("") || messageContent.matches("") || start_date.matches("Start Date") || end_date.matches("End Date") || location.matches("Please pick an existing location") || start_time.matches("Start Time") || end_time.matches("End Time") ) {
+        if (message_title.matches("") || messageContent.matches("") || start_date.matches("Start Date") || end_date.matches("End Date") || location.matches("Please pick an existing location") || keys.matches("Whitelist")) {
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
 
         } else {
-            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username)) {
+            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username, keys)) {
                 startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
             } else {
                 Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();

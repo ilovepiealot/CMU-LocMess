@@ -27,11 +27,10 @@
         android:layout_height="wrap_content"
         android:text="Set Start Time"
         android:onClick="start_date_click"
-        android:layout_marginBottom="38dp"
         android:focusable="false"
-        android:layout_above="@+id/start_date"
-        android:layout_alignRight="@+id/cancelnewmessage"
-        android:layout_alignEnd="@+id/cancelnewmessage" />
+        android:layout_above="@+id/text_start_date"
+        android:layout_alignLeft="@+id/text_start_date"
+        android:layout_alignStart="@+id/text_start_date" />
 
     <Button
         android:id="@+id/end_time"
@@ -51,7 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Set Start Date"
         android:onClick="start_date_click"
-        android:layout_marginBottom="38dp"
+        android:layout_marginBottom="16dp"
         android:focusable="false"
         android:layout_above="@+id/cancelnewmessage"
         android:layout_alignRight="@+id/cancelnewmessage"
@@ -155,20 +154,37 @@
         android:id="@+id/whitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Whitelist"
         android:layout_above="@+id/text_start_time"
         android:layout_alignLeft="@+id/text_start_time"
-        android:layout_alignStart="@+id/text_start_time"
-        android:layout_marginBottom="19dp"
-        android:text="Whitelist" />
+        android:layout_alignStart="@+id/text_start_time" />
 
     <TextView
         android:id="@+id/text_whitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Whitelist"
         android:layout_above="@+id/whitelist"
-        android:layout_toLeftOf="@+id/message_title"
-        android:layout_toStartOf="@+id/message_title"
-        android:text="Whitelist" />
+        android:layout_alignLeft="@+id/whitelist"
+        android:layout_alignStart="@+id/whitelist" />
+
+    <Button
+        android:id="@+id/blacklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blacklist"
+        android:layout_above="@+id/text_end_time"
+        android:layout_alignLeft="@+id/text_end_time"
+        android:layout_alignStart="@+id/text_end_time" />
+
+    <TextView
+        android:id="@+id/text_blacklist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Blacklist"
+        android:layout_above="@+id/blacklist"
+        android:layout_alignLeft="@+id/blacklist"
+        android:layout_alignStart="@+id/blacklist" />
 
 
 </RelativeLayout>

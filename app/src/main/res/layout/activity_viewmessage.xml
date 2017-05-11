@@ -53,19 +53,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Date"
+        android:layout_marginBottom="14dp"
         android:layout_above="@+id/end_date"
-        android:layout_marginBottom="24dp"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/end_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="End Date"
-        android:layout_marginBottom="59dp"
+        android:layout_marginBottom="28dp"
         android:layout_above="@+id/previous"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_alignLeft="@+id/location"
+        android:layout_alignStart="@+id/location" />
 
     <TextView
         android:id="@+id/sender"
