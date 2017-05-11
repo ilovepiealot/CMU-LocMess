@@ -16,16 +16,21 @@
 
 package grupo19.locmess19.Services;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +51,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import grupo19.locmess19.Activities.InboxActivity;
 import grupo19.locmess19.Activities.MessagesActivity;
@@ -136,9 +143,18 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
     public String username;
 
+    // Current date, time
+    Calendar dateCurrent = Calendar.getInstance();
+
+    public WifiManager mWifiManager;
+
+    public List<ScanResult> mScanResults;
+
+
     public LocationUpdatesService() {
     }
 
+    @SuppressLint("WifiManagerLeak")
     @Override
     public void onCreate() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -156,6 +172,9 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
         server = new ServerCommunication("10.0.2.2", 11113);
 
+        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        registerReceiver(mWifiScanReceiver,
+                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
     }
 
     @Override
@@ -330,34 +349,62 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
 
+
         if (location != null) {
+            mWifiManager.startScan();
+            Long CurrentEpoch = dateCurrent.getTimeInMillis();
             messageList = server.getExistingMessages();
             locationList = server.getExistingLocations();
             for (String[] messagesServer : messageList) {
                 if (!messagesServer[5].equals(username)) {
                     Log.e(TAG, "username is different");
-                    for (String[] locServer : locationList) {
-                        if (locServer[0].equals(messagesServer[4])) {
-                            Log.e(TAG, "location found in list");
-                            if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
-                                Log.e(TAG, "location check");
-                                String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
-                                messageStringArray = messagesServer;
-                                Log.e(TAG, finalMessage);
-                                // Notify anyone listening for broadcasts about the new location.
-                                Intent intent = new Intent(ACTION_BROADCAST);
-                                // intent.putExtra(EXTRA_LOCATION, location);
-                                intent.putExtra(EXTRA_STRING, finalMessage);
-                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                    if (Long.parseLong(messagesServer[2]) <= CurrentEpoch && Long.parseLong(messagesServer[3]) >= CurrentEpoch) {
+                        for (String[] locServer : locationList) {
+                            if (locServer[0].equals(messagesServer[4])) {
+                                Log.e(TAG, "location found in list");
+                                if (locServer.length == 4) {
+                                    if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
+                                        Log.e(TAG, "GPS location check");
+                                        String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                        messageStringArray = messagesServer;
+                                        Log.e(TAG, finalMessage);
+                                        // Notify anyone listening for broadcasts about the new location.
+                                        Intent intent = new Intent(ACTION_BROADCAST);
+                                        // intent.putExtra(EXTRA_LOCATION, location);
+                                        intent.putExtra(EXTRA_STRING, finalMessage);
+                                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
-                                // Update notification content if running as a foreground service.
-                                if (serviceIsRunningInForeground(this)) {
-                                    mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                        // Update notification content if running as a foreground service.
+                                        if (serviceIsRunningInForeground(this)) {
+                                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                        }
+                                        break;
+                                    }
+                                } else {
+                                    if (mScanResults != null) {
+                                        for (ScanResult wifi : mScanResults) {
+                                            if (wifi.SSID.equals(locServer[1])) {
+                                                Log.e(TAG, "WIFI location check");
+                                                String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                                messageStringArray = messagesServer;
+                                                Log.e(TAG, finalMessage);
+                                                // Notify anyone listening for broadcasts about the new location.
+                                                Intent intent = new Intent(ACTION_BROADCAST);
+                                                // intent.putExtra(EXTRA_LOCATION, location);
+                                                intent.putExtra(EXTRA_STRING, finalMessage);
+                                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                                                // Update notification content if running as a foreground service.
+                                                if (serviceIsRunningInForeground(this)) {
+                                                    mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
-                                break;
                             }
                         }
-
                     }
                 }
             }
@@ -424,4 +471,14 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
         }
         return false;
     }
+
+    private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context c, Intent intent) {
+            if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+                mScanResults = mWifiManager.getScanResults();
+                // add your logic here
+            }
+        }
+    };
 }
