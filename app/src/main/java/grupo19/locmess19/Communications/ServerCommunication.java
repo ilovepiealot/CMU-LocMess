@@ -126,7 +126,7 @@ public class ServerCommunication {
         return registered;
     }
 
-    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String starttime, final String endtime) {
+    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -143,7 +143,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + starttime + SEPARATOR + endtime);
+                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -168,7 +168,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public boolean saveMessageToInbox(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String id, final String starttime, final String endtime) {
+    public boolean saveMessageToInbox(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String id) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -185,7 +185,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + id + SEPARATOR + starttime + SEPARATOR + endtime);
+                        oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + id);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");

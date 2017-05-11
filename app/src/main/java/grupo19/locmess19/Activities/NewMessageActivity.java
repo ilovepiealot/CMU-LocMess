@@ -29,7 +29,8 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
     DateFormat formatDateTime = DateFormat.getDateInstance();
     DateFormat formatTime = DateFormat.getTimeInstance(DateFormat.SHORT);
-    Calendar date = Calendar.getInstance();
+    Calendar dateBegin = Calendar.getInstance();
+    Calendar dateEnd = Calendar.getInstance();
     Spinner spinner;
     private TextView text;
     private TextView text_end;
@@ -190,17 +191,17 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
 
     private void updateLabel(){
-        text.setText(formatDateTime.format(date.getTime()));
+        text.setText(formatDateTime.format(dateBegin.getTime()));
     }
     private void updateLabelEnd(){
-        text_end.setText(formatDateTime.format(date.getTime()));
+        text_end.setText(formatDateTime.format(dateEnd.getTime()));
     }
 
     private void updateTimeLabel(){
-        text_time.setText(formatTime.format(date.getTime()));
+        text_time.setText(formatTime.format(dateBegin.getTime()));
     }
     private void updateTimeLabelEnd(){
-        text_time_end.setText(formatTime.format(date.getTime()));
+        text_time_end.setText(formatTime.format(dateEnd.getTime()));
     }
 
     public void cancel_click(View v){
@@ -209,32 +210,32 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     }
 
     private void updateTime(){
-        new TimePickerDialog(this, t, date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE), true).show();
+        new TimePickerDialog(this, t, dateBegin.get(Calendar.HOUR_OF_DAY), dateBegin.get(Calendar.MINUTE), true).show();
     }
     private void updateTimeEnd(){
-        new TimePickerDialog(this, t_end, date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE), true).show();
+        new TimePickerDialog(this, t_end, dateEnd.get(Calendar.HOUR_OF_DAY), dateEnd.get(Calendar.MINUTE), true).show();
     }
 
     private void updateDate(){
-        new DatePickerDialog(this, d, date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, d, dateBegin.get(Calendar.YEAR), dateBegin.get(Calendar.MONTH), dateBegin.get(Calendar.DAY_OF_MONTH)).show();
     }
     private void updateDateEnd(){
-        new DatePickerDialog(this, d_end, date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, d_end, dateEnd.get(Calendar.YEAR), dateEnd.get(Calendar.MONTH), dateEnd.get(Calendar.DAY_OF_MONTH)).show();
     }
     //TIME PICKERS
     TimePickerDialog.OnTimeSetListener t = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            date.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            date.set(Calendar.MINUTE, minute);
+            dateBegin.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            dateBegin.set(Calendar.MINUTE, minute);
             updateTimeLabel();
         }
     };
     TimePickerDialog.OnTimeSetListener t_end = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            date.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            date.set(Calendar.MINUTE, minute);
+            dateEnd.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            dateEnd.set(Calendar.MINUTE, minute);
             updateTimeLabelEnd();
         }
     };
@@ -242,9 +243,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener(){
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            date.set(Calendar.YEAR, year);
-            date.set(Calendar.MONTH, month);
-            date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            dateBegin.set(Calendar.YEAR, year);
+            dateBegin.set(Calendar.MONTH, month);
+            dateBegin.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             updateLabel();
         }
     };
@@ -252,9 +253,9 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     DatePickerDialog.OnDateSetListener d_end = new DatePickerDialog.OnDateSetListener(){
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            date.set(Calendar.YEAR, year);
-            date.set(Calendar.MONTH, month);
-            date.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            dateEnd.set(Calendar.YEAR, year);
+            dateEnd.set(Calendar.MONTH, month);
+            dateEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             updateLabelEnd();
         }
     };
@@ -273,10 +274,12 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
     public void createnewmessage(View v){
 
+
+
         String message_title = ((TextView) findViewById(R.id.message_title)).getText().toString();
         String messageContent = ((TextView) findViewById(R.id.messageContent)).getText().toString();
-        String start_date = ((TextView) findViewById(R.id.text_start_date)).getText().toString();
-        String end_date = ((TextView) findViewById(R.id.text_end_date)).getText().toString();
+        String start_date = String.valueOf(dateBegin.getTimeInMillis());
+        String end_date = String.valueOf(dateEnd.getTimeInMillis());
         String start_time = ((TextView) findViewById(R.id.text_start_time)).getText().toString();
         String end_time = ((TextView) findViewById(R.id.text_end_time)).getText().toString();
         String location = spinner.getSelectedItem().toString();
@@ -285,7 +288,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
 
         } else {
-            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username, start_time, end_time)) {
+            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username)) {
                 startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
             } else {
                 Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();

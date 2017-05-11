@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
 
@@ -23,6 +26,8 @@ public class ViewMessageActivity extends AppCompatActivity  {
     String s;
     String[] receivedMessage;
     String username;
+    Calendar dateStart = Calendar.getInstance();
+    Calendar dateEnd = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +53,13 @@ public class ViewMessageActivity extends AppCompatActivity  {
         TextView location = (TextView) findViewById(R.id.location);
         TextView sender = (TextView) findViewById(R.id.sender);
 
-        String STARTdateANDtime = receivedMessage[2] + "-" + receivedMessage[7];
-        String ENDdateANDtime = receivedMessage[3] + "-" + receivedMessage[8];
+        dateStart.setTimeInMillis(Long.parseLong(receivedMessage[2]));
+        dateEnd.setTimeInMillis(Long.parseLong(receivedMessage[3]));
+
+        SimpleDateFormat format = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a");
+
+        String STARTdateANDtime = format.format(dateStart.getTime());
+        String ENDdateANDtime = format.format(dateEnd.getTime());
 
         message_title.setText(receivedMessage[0]);
         messageContent.setText(receivedMessage[1]);
