@@ -91,7 +91,12 @@ public class Server implements Runnable {
 						break;
 						
 					case "getuserkeys":
-						ArrayList<SimpleEntry<String, String>> keys = getUserKeys(vs[1]);
+						HashMap<String, String> userKeys = getUserKeys(vs[1]);
+						oos.writeObject(userKeys);
+						break;
+						
+					case "getallkeys":
+						HashMap<String, String> keys = getAllKeys();
 						oos.writeObject(keys);
 						break;
 						
@@ -242,7 +247,7 @@ public class Server implements Runnable {
 			File tempFile = new File("files/" + username + "_keysTemp.txt");
 			Writer bwriter = new BufferedWriter(new FileWriter(tempFile));
 			Scanner keysScanner = new Scanner(keysFile);
-			boolean check = true;
+			boolean renamed = false, deleted = false;
 			while (keysScanner.hasNext()) {
 				String wholeLine = keysScanner.nextLine();
 				String[] arr = wholeLine.split(SEPARATOR);
@@ -252,9 +257,9 @@ public class Server implements Runnable {
 			}
 			keysScanner.close();
 			bwriter.close();
-			keysFile.delete();
-			check = tempFile.renameTo(keysFile);
-			System.out.println(time() + "Deleted key <" + key + "> from user " + username + " : " + check + "\n");
+			deleted = keysFile.delete();
+			renamed = tempFile.renameTo(keysFile);
+			System.out.println(time() + "Deleted key <" + key + "> from user " + username + " : renamed=" + renamed + " deleted=" + deleted + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -293,19 +298,38 @@ public class Server implements Runnable {
     	return true;
     }
     
-    public ArrayList<SimpleEntry<String, String>> getUserKeys(String username){
+    public HashMap<String, String> getUserKeys(String username){
 		File usersKeyFile = new File("files/" + username + "_keys.txt");
 		Scanner userKeysScanner;
-		ArrayList<SimpleEntry<String, String>> userKeys = new ArrayList<SimpleEntry<String, String>>();
+		HashMap<String, String> userKeys = new HashMap<String, String>();
 		try {
 			userKeysScanner = new Scanner(usersKeyFile);
 			while (userKeysScanner.hasNext()) {
 				String wholeLine = userKeysScanner.nextLine();
 				String[] arr = wholeLine.split(SEPARATOR);
-				userKeys.add(new SimpleEntry<String,String>(arr[0],arr[1]));
-				//userKeysScanner.close();
+				userKeys.put(arr[0],arr[1]);
 				System.out.println(time() + "Get all keys from user " + username + "\n");
 			}
+			userKeysScanner.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return userKeys;
+    }
+    
+    public HashMap<String, String> getAllKeys(){
+		File keysFile = new File("files/keys.txt");
+		Scanner keysScanner;
+		HashMap<String, String> userKeys = new HashMap<String, String>();
+		try {
+			keysScanner = new Scanner(keysFile);
+			while (keysScanner.hasNext()) {
+				String wholeLine = keysScanner.nextLine();
+				String[] arr = wholeLine.split(SEPARATOR);
+				userKeys.put(arr[0],arr[1]);
+				System.out.println(time() + "Get all keys \n");
+			}
+			keysScanner.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

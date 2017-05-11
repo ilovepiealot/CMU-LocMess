@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -30,7 +31,8 @@ public class ServerCommunication {
     private boolean getted = false;
     private boolean destroyed = false;
 
-    private ArrayList<SimpleEntry<String,String>> userKeys = null;
+    private HashMap<String, String> userKeys = null;
+    private HashMap<String, String> allKeys = null;
     private Map<String,String> messageTitles = null;
     private ArrayList<String[]> locationList = null;
     private ArrayList<String[]> messageList = null;
@@ -337,7 +339,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public ArrayList<SimpleEntry<String, String>> getUserKeys(final String username) {
+    public HashMap<String, String> getUserKeys(final String username) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -354,7 +356,7 @@ public class ServerCommunication {
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         oos.writeObject("getuserkeys:" + username);
 
-                        userKeys = (ArrayList<SimpleEntry<String, String>>) ois.readObject();
+                        userKeys = (HashMap<String, String>) ois.readObject();
 
                         oos.writeObject("quit");
 
@@ -374,6 +376,45 @@ public class ServerCommunication {
 
         return userKeys;
     }
+
+    public HashMap<String, String> getAllKeys() {
+
+        try {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Socket s = null;
+                    try {
+
+                        s = new Socket(ip, port);
+
+                        Object[] o = createCommunication(s);
+                        ObjectInputStream ois = (ObjectInputStream) o[0];
+                        ObjectOutputStream oos = (ObjectOutputStream) o[1];
+                        oos.writeObject("getallkeys:");
+
+                        allKeys = (HashMap<String, String>) ois.readObject();
+
+                        oos.writeObject("quit");
+
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+            t.start();
+            //waits for result
+            t.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return userKeys;
+    }
+
 
     public ArrayList<String[]> getExistingLocations() {
 
