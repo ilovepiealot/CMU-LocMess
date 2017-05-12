@@ -172,9 +172,9 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
         server = new ServerCommunication("10.0.2.2", 11113);
 
-        mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        registerReceiver(mWifiScanReceiver,
-                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        // mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        /* registerReceiver(mWifiScanReceiver,
+                new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)); */
     }
 
     @Override
@@ -351,7 +351,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
 
         if (location != null) {
-            mWifiManager.startScan();
+            // mWifiManager.startScan();
             Long CurrentEpoch = dateCurrent.getTimeInMillis();
             messageList = server.getExistingMessages();
             locationList = server.getExistingLocations();
@@ -380,7 +380,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                                         }
                                         break;
                                     }
-                                } else {
+                                } /* else {
                                     if (mScanResults != null) {
                                         for (ScanResult wifi : mScanResults) {
                                             if (wifi.SSID.equals(locServer[1])) {
@@ -402,7 +402,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                                             }
                                         }
                                     }
-                                }
+                                } */
                             }
                         }
                     }
@@ -470,8 +470,9 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
             }
         }
         return false;
-    }
+    };
 
+    /*
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
@@ -480,5 +481,5 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                 // add your logic here
             }
         }
-    };
+    }; */
 }

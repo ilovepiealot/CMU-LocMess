@@ -1,0 +1,5 @@
+newdevice A
+assignaddr e1
+binddevice A e1
+wait
+ping
