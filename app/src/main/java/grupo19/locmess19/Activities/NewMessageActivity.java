@@ -384,7 +384,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
             Toast.makeText(this, "Start date cannot be previous to the current date", Toast.LENGTH_SHORT).show();
         }
 
-        if (message_title.matches("") || messageContent.matches("") || start_date.matches("Start Date") || end_date.matches("End Date") || location.matches("Please pick an existing location") || validInterval || validStart) {
+        if (message_title.matches("") || messageContent.matches("") || /*start_date.matches("") || end_date.matches("") || */ location.matches("Please pick an existing location") || !validInterval || !validStart) {
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
 
         } else {
