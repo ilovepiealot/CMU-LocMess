@@ -166,7 +166,8 @@
         android:text="Whitelist"
         android:layout_above="@+id/whitelist"
         android:layout_alignLeft="@+id/whitelist"
-        android:layout_alignStart="@+id/whitelist" />
+        android:layout_alignStart="@+id/whitelist"
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/blacklist"
@@ -184,7 +185,8 @@
         android:text="Blacklist"
         android:layout_above="@+id/blacklist"
         android:layout_alignLeft="@+id/blacklist"
-        android:layout_alignStart="@+id/blacklist" />
+        android:layout_alignStart="@+id/blacklist"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>

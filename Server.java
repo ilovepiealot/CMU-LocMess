@@ -128,11 +128,11 @@ public class Server implements Runnable {
 						mes = line.split(SEPARATOR);
 						messageID++;
 						messageIDString = String.valueOf(messageID);
-						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString, mes[7]));
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString, mes[7], mes[8]));
 						break;
 					case "savemessagetoinbox":
 						mes = line.split(SEPARATOR);
-						oos.writeObject(saveMessageToInbox(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], mes[7]));
+						oos.writeObject(saveMessageToInbox(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], mes[7], mes[8], mes[9]));
 						break;
 					case "getTitles":
 						oos.writeObject(getTitles(vs[1], vs[2]));
@@ -452,7 +452,7 @@ public class Server implements Runnable {
 		
     }
         
-    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String keys){
+    public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String wkeys, String bkeys){
 		
 		boolean created = true;
 		/*messagesFile = new File("files/messages_" + username2 + ".txt");
@@ -466,10 +466,10 @@ public class Server implements Runnable {
 		
 			try {
 				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + keys);
+				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + wkeys + SEPARATOR + bkeys);
 				messagesWriter.close();
 				messagesGlobalWriter = new PrintWriter(new FileWriter(messagesGlobalFile, true));
-				messagesGlobalWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + keys);
+				messagesGlobalWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + wkeys + SEPARATOR + bkeys);
 				messagesGlobalWriter.close();
 			} catch (IOException e) {
 				System.out.println(e);
@@ -478,14 +478,14 @@ public class Server implements Runnable {
 		return created;
     }
 
-        public boolean saveMessageToInbox(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString){
+        public boolean saveMessageToInbox(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String wkeys, String bkeys){
 		
 		boolean created = true;
 		PrintWriter messagesWriter;
 
 			try {
 				messagesWriter = new PrintWriter(new FileWriter(messagesFile, true));
-				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString);
+				messagesWriter.println("\n" + messageTitle + SEPARATOR + messageContent + SEPARATOR + messageStartDate + SEPARATOR + messageEndDate + SEPARATOR + location + SEPARATOR + username2 + SEPARATOR + messageIDString + SEPARATOR + wkeys + SEPARATOR + bkeys);
 				messagesWriter.close();
 			} catch (IOException e) {
 				System.out.println(e);

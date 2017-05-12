@@ -45,7 +45,7 @@ public class InboxActivity extends AppCompatActivity{
             Log.e(TAG,finalMessageStringArray[0]);
             server.saveMessageToInbox(finalMessageStringArray[0], finalMessageStringArray[1], finalMessageStringArray[2],
                     finalMessageStringArray[3], finalMessageStringArray[4], finalMessageStringArray[5],
-                    finalMessageStringArray[6]);
+                    finalMessageStringArray[6], finalMessageStringArray[7], finalMessageStringArray[8]);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
