@@ -50,8 +50,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import grupo19.locmess19.Activities.InboxActivity;
@@ -138,6 +140,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     private ServerCommunication server;
     ArrayList<String[]> messageList;
     ArrayList<String[]> locationList;
+    HashMap<String, String> userKeys;
 
     public String[] messageStringArray;
 
@@ -355,54 +358,112 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
             Long CurrentEpoch = dateCurrent.getTimeInMillis();
             messageList = server.getExistingMessages();
             locationList = server.getExistingLocations();
+            userKeys = server.getUserKeys(username);
+            Boolean checkWhitelist = false;
+            Boolean checkBlacklist = false;
+            ArrayList<String[]> whitelistKeys = new ArrayList<>();
+            ArrayList<String[]> blacklistKeys = new ArrayList<>();
             for (String[] messagesServer : messageList) {
                 if (!messagesServer[5].equals(username)) {
                     Log.e(TAG, "username is different");
                     if (Long.parseLong(messagesServer[2]) <= CurrentEpoch && Long.parseLong(messagesServer[3]) >= CurrentEpoch) {
-                        for (String[] locServer : locationList) {
-                            if (locServer[0].equals(messagesServer[4])) {
-                                Log.e(TAG, "location found in list");
-                                if (locServer.length == 4) {
-                                    if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
-                                        Log.e(TAG, "GPS location check");
-                                        String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
-                                        messageStringArray = messagesServer;
-                                        Log.e(TAG, finalMessage);
-                                        // Notify anyone listening for broadcasts about the new location.
-                                        Intent intent = new Intent(ACTION_BROADCAST);
-                                        // intent.putExtra(EXTRA_LOCATION, location);
-                                        intent.putExtra(EXTRA_STRING, finalMessage);
-                                        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                        // KEYS VERIFICATION
+                        String[] messageWhitelistKeyPairs = messagesServer[7].split("#KEY#");
+                        String[] messageBlacklistKeyPairs = messagesServer[8].split("#KEY#");
 
-                                        // Update notification content if running as a foreground service.
-                                        if (serviceIsRunningInForeground(this)) {
-                                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
-                                        }
-                                        break;
+                        for (String whitelistKey : messageWhitelistKeyPairs) {
+                            Log.e(TAG, String.valueOf("Whitelist Key " + whitelistKey));
+                            try {
+                                whitelistKeys.add(whitelistKey.split(" -> "));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        for (String blacklistKey : messageBlacklistKeyPairs) {
+                            Log.e(TAG, String.valueOf("Blacklist Key " + blacklistKey));
+
+                            try {
+                                blacklistKeys.add(blacklistKey.split(" -> "));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        // WHITELIST
+                        try {
+                            for (String key : userKeys.keySet()) {
+                                for (String[] whitelistKey : whitelistKeys) {
+                                    Log.e(TAG, String.valueOf("Key " + key));
+                                    Log.e(TAG, String.valueOf("Value " + userKeys.get(key)));
+                                    Log.e(TAG, String.valueOf("Message key " + whitelistKey[0]));
+                                    Log.e(TAG, String.valueOf("Message value " + whitelistKey[1]));
+                                    if (whitelistKey[0].equals(key) && whitelistKey[1].equals(userKeys.get(key))) {
+                                        checkWhitelist = true;
                                     }
-                                } /* else {
-                                    if (mScanResults != null) {
-                                        for (ScanResult wifi : mScanResults) {
-                                            if (wifi.SSID.equals(locServer[1])) {
-                                                Log.e(TAG, "WIFI location check");
-                                                String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
-                                                messageStringArray = messagesServer;
-                                                Log.e(TAG, finalMessage);
-                                                // Notify anyone listening for broadcasts about the new location.
-                                                Intent intent = new Intent(ACTION_BROADCAST);
-                                                // intent.putExtra(EXTRA_LOCATION, location);
-                                                intent.putExtra(EXTRA_STRING, finalMessage);
-                                                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        // BLACKLIST
+                        try {
+                            for (String key : userKeys.keySet()) {
+                                for (String[] blacklistKey : blacklistKeys) {
+                                    if (blacklistKey[0].equals(key) && blacklistKey[1].equals(userKeys.get(key))) {
+                                        checkBlacklist = true;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Log.e(TAG, String.valueOf(checkWhitelist));
+                        Log.e(TAG, String.valueOf(checkBlacklist));
+                        if (checkWhitelist == true && checkBlacklist == false) {
+                            for (String[] locServer : locationList) {
+                                if (locServer[0].equals(messagesServer[4])) {
+                                    Log.e(TAG, "location found in list");
+                                    if (locServer.length == 4) {
+                                        if (checkLocationInRadius(location, locServer[1], locServer[2], locServer[3])) {
+                                            Log.e(TAG, "GPS location check");
+                                            String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                            messageStringArray = messagesServer;
+                                            Log.e(TAG, finalMessage);
+                                            // Notify anyone listening for broadcasts about the new location.
+                                            Intent intent = new Intent(ACTION_BROADCAST);
+                                            // intent.putExtra(EXTRA_LOCATION, location);
+                                            intent.putExtra(EXTRA_STRING, finalMessage);
+                                            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                            // Update notification content if running as a foreground service.
+                                            if (serviceIsRunningInForeground(this)) {
+                                                mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                            }
+                                            break;
+                                        }
+                                    } /* else {
+                                        if (mScanResults != null) {
+                                            for (ScanResult wifi : mScanResults) {
+                                                if (wifi.SSID.equals(locServer[1])) {
+                                                    Log.e(TAG, "WIFI location check");
+                                                    String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                                    messageStringArray = messagesServer;
+                                                    Log.e(TAG, finalMessage);
+                                                    // Notify anyone listening for broadcasts about the new location.
+                                                    Intent intent = new Intent(ACTION_BROADCAST);
+                                                    // intent.putExtra(EXTRA_LOCATION, location);
+                                                    intent.putExtra(EXTRA_STRING, finalMessage);
+                                                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
-                                                // Update notification content if running as a foreground service.
-                                                if (serviceIsRunningInForeground(this)) {
-                                                    mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                                    // Update notification content if running as a foreground service.
+                                                    if (serviceIsRunningInForeground(this)) {
+                                                        mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                                    }
+                                                    break;
                                                 }
-                                                break;
                                             }
                                         }
-                                    }
-                                } */
+                                    } */
+                                }
                             }
                         }
                     }

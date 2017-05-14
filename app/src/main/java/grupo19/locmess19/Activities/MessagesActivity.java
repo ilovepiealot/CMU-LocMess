@@ -244,6 +244,7 @@ public class MessagesActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show(); */
                 Toast.makeText(MessagesActivity.this,
                         finalMessage, Toast.LENGTH_SHORT).show();
+
             }
         }
     }
