@@ -440,7 +440,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                                             }
                                             break;
                                         }
-                                    } /* else {
+                                    } else {
                                         if (mScanResults != null) {
                                             for (ScanResult wifi : mScanResults) {
                                                 if (wifi.SSID.equals(locServer[1])) {
@@ -462,7 +462,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                                                 }
                                             }
                                         }
-                                    } */
+                                    }
                                 }
                             }
                         }
@@ -533,7 +533,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
         return false;
     };
 
-    /*
+
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context c, Intent intent) {
@@ -542,5 +542,5 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                 // add your logic here
             }
         }
-    }; */
+    };
 }
