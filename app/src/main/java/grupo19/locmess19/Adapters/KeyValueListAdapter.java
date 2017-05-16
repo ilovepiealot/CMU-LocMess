@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +26,10 @@ import grupo19.locmess19.R;
 
 public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>> {
 
-    Context context;
+    private Context context;
     private List<SimpleEntry<String,String>> items;
-    ServerCommunication server;
-    String username;
+    private ServerCommunication server;
+    private String username;
 
     public KeyValueListAdapter(Context context, int resourceId, List<SimpleEntry<String,String>> items) {
         super(context, resourceId, items);
@@ -46,7 +47,8 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
         TextView txtValue;
     }
 
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder = null;
         final SimpleEntry<String,String> kv = getItem(position);
 
@@ -75,7 +77,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0,
                                                 int arg1) {
-                                new DeleteKeyOperation().execute(username, items.get(position).getKey());
+                                new DeleteKeyOperation().execute(username, items.get(position).getKey(), items.get(position).getValue());
                                 items.remove(position);
                                 notifyDataSetChanged();
                             }
@@ -101,7 +103,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
 
         @Override
         protected String doInBackground(String... params) {
-            if (server.deleteKey(params[0],params[1])) {
+            if (server.deleteKey(params[0],params[1], params[2])) {
                 return "Success";
             } else {
                 return "Failed";

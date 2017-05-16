@@ -46,7 +46,9 @@
     <string name="apply_changes">Apply</string>
     <string name="new_key">New Key</string>
     <string name="new_value">New Value</string>
-
+    <string name="key">Key</string>
+    <string name="value">Value</string>
+    <string name="create_new">Create new&#8230;</string>
 
 
 
@@ -163,5 +165,6 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="title_activity_new_key">NewKeyActivity</string>
 
 </resources>

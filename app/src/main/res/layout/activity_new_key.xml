@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/backgroundcolor"
+    tools:context="grupo19.locmess19.Activities.NewKeyActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/key"
+            android:textAppearance="?android:textAppearanceMedium"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white_opacity"
+            >
+
+            <Spinner
+                android:id="@+id/keys_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"/>
+
+            <EditText
+                android:id="@+id/newKeyText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:ems="14"
+                android:hint="@string/new_key"
+                android:inputType="text" />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/value"
+            android:textAppearance="?android:textAppearanceMedium"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/white_opacity">
+        <Spinner
+            android:id="@+id/values_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+            <EditText
+                android:id="@+id/newValueText"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:ems="14"
+                android:hint="@string/new_value"
+                android:inputType="text" />
+
+        </RelativeLayout>
+
+
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/new_key_cancel_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/add_new_key_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="@string/add_key" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

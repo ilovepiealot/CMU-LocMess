@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <item name="white_opacity" type="color">#AAFFFFFF</item>
     <color name="colorPrimary">#FF2B9E91</color>
     <color name="colorPrimaryDark">#FF2965BA</color>
     <color name="colorAccent">#FF4081</color>

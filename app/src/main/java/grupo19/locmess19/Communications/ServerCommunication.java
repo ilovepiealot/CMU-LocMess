@@ -623,7 +623,7 @@ public class ServerCommunication {
         return locationDetails;
     }
 
-    public boolean deleteKey(final String key, final String username) {
+    public boolean deleteKey(final String key, final String username, final String value) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -640,7 +640,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("deletekey:" + key + SEPARATOR + username);
+                        oos.writeObject("deletekey:" + key + SEPARATOR + username + SEPARATOR + value);
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
 

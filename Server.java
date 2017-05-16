@@ -87,7 +87,7 @@ public class Server implements Runnable {
 						
 					case "deletekey":
 						String[] user_key = vs[1].split(SEPARATOR);
-						oos.writeObject(deleteKey(user_key[0], user_key[1]));
+						oos.writeObject(deleteKey(user_key[0], user_key[1], user_key[2]));
 						break;
 						
 					case "getuserkeys":
@@ -266,7 +266,7 @@ public class Server implements Runnable {
 		return true;
     }
     
-    public boolean deleteGlobalKey(String key){
+    public boolean deleteGlobalKey(String key, String value){
     	try {
 			File keysFile2 = new File("files/keys.txt");
 			File tempFile2 = new File("files/keysTemp.txt");
@@ -276,7 +276,7 @@ public class Server implements Runnable {
 			while (keysScanner2.hasNext()) {
 				String wholeLine = keysScanner2.nextLine();
 				String[] arr = wholeLine.split(SEPARATOR);
-				if (!arr[0].equals(key)) {
+				if (!arr[0].equals(key) && !arr[1].equals(value)) {
 					bwriter2.write(wholeLine + System.getProperty("line.separator"));
 				}
 			}
@@ -284,7 +284,7 @@ public class Server implements Runnable {
 			bwriter2.close();
 			keysFile2.delete();
 			check2 = tempFile2.renameTo(keysFile2);
-			System.out.println(time() + "Deleted global key <" + key + ">" + " : " + check2 + "\n");
+			System.out.println(time() + "Deleted global key <" + key + "," + value + ">" + " : " + check2 + "\n");
 		
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -292,8 +292,8 @@ public class Server implements Runnable {
 		return true;
     }
     
-    public boolean deleteKey(String username, String key){
-	    deleteGlobalKey(key);
+    public boolean deleteKey(String username, String key, String value){
+	    deleteGlobalKey(key, value);
 	    deletePrivateKey(username, key);
     	return true;
     }
@@ -308,9 +308,9 @@ public class Server implements Runnable {
 				String wholeLine = userKeysScanner.nextLine();
 				String[] arr = wholeLine.split(SEPARATOR);
 				userKeys.put(arr[0],arr[1]);
-				System.out.println(time() + "Get all keys from user " + username + "\n");
 			}
 			userKeysScanner.close();
+			System.out.println(time() + "Get all keys from user " + username + "\n");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -327,9 +327,9 @@ public class Server implements Runnable {
 				String wholeLine = keysScanner.nextLine();
 				String[] arr = wholeLine.split(SEPARATOR);
 				userKeys.put(arr[0],arr[1]);
-				System.out.println(time() + "Get all keys \n");
 			}
 			keysScanner.close();
+			System.out.println(time() + "Get all keys \n");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
