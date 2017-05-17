@@ -27,6 +27,8 @@ public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
             // - destroying the service generates the WIFI_P2P_STATE_DISABLED event
 
             int state = intent.getIntExtra(SimWifiP2pBroadcast.EXTRA_WIFI_STATE, -1);
+            Toast.makeText(mActivity, "State: " + String.valueOf(state),
+                    Toast.LENGTH_SHORT).show();
             if (state == SimWifiP2pBroadcast.WIFI_P2P_STATE_ENABLED) {
                 Toast.makeText(mActivity, "WiFi Direct enabled",
                         Toast.LENGTH_SHORT).show();
@@ -43,8 +45,6 @@ public class SimWifiP2pBroadcastReceiver extends BroadcastReceiver {
 
             Toast.makeText(mActivity, "Peer list changed",
                     Toast.LENGTH_SHORT).show();
-
-            mActivity.updateInRange();
 
         } else if (SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION.equals(action)) {
 

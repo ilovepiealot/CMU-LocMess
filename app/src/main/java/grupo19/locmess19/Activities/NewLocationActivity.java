@@ -345,22 +345,22 @@ public class NewLocationActivity extends AppCompatActivity implements Connection
         EditText editWifi = (EditText) findViewById(R.id.wifi_id);
 
 
-        String locName = editLocationName.getText().toString();
-        String locLatitude = editLatitude.getText().toString().substring(6);
-        String locLongitude = editLongitude.getText().toString().substring(6);
-        String locRadius = editRadius.getText().toString();
-        String locWifi = editWifi.getText().toString();
-
         ToggleButton tgBtn = (ToggleButton) findViewById(R.id.loc_type);
 
 
         if(!tgBtn.isChecked()) {
+            String locName = editLocationName.getText().toString();
+            String locLatitude = editLatitude.getText().toString().substring(6);
+            String locLongitude = editLongitude.getText().toString().substring(6);
+            String locRadius = editRadius.getText().toString();
             if (locName != null && locLatitude != null && locLongitude != null && locRadius != null) {
                 server.saveNewLocationGPS(locName, locLatitude, locLongitude, locRadius);
                 Intent intent = new Intent(getBaseContext(), MessagesActivity.class);
                 startActivity(intent);
             }
         } else {
+            String locName = editLocationName.getText().toString();
+            String locWifi = editWifi.getText().toString();
             if (locName != null && locWifi != null) {
                 server.saveNewLocationWifi(locName, locWifi);
                 Intent intent = new Intent(getBaseContext(), MessagesActivity.class);

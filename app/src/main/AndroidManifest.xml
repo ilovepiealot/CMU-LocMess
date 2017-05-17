@@ -36,6 +36,8 @@
         <activity android:name=".Activities.ViewLocationActivity" />
 
         <service android:name=".Services.LocationUpdatesService" />
+        <service android:name="pt.inesc.termite.wifidirect.service.SimWifiP2pService" />
+
 
         <activity
             android:name=".Activities.MessagesActivity"

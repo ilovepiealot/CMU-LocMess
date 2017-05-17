@@ -354,7 +354,6 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
 
 
         if (location != null) {
-            // mWifiManager.startScan();
             Long CurrentEpoch = dateCurrent.getTimeInMillis();
             messageList = server.getExistingMessages();
             locationList = server.getExistingLocations();
@@ -367,6 +366,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                 if (!messagesServer[5].equals(username)) {
                     Log.e(TAG, "username is different");
                     if (Long.parseLong(messagesServer[2]) <= CurrentEpoch && Long.parseLong(messagesServer[3]) >= CurrentEpoch) {
+                        Log.e(TAG, "Message is active");
                         // KEYS VERIFICATION
                         String[] messageWhitelistKeyPairs = messagesServer[7].split("#KEY#");
                         String[] messageBlacklistKeyPairs = messagesServer[8].split("#KEY#");
@@ -419,6 +419,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                         Log.e(TAG, String.valueOf(checkWhitelist));
                         Log.e(TAG, String.valueOf(checkBlacklist));
                         if (checkWhitelist == true && checkBlacklist == false) {
+                            Log.e(TAG, "Message is whitelisted");
                             for (String[] locServer : locationList) {
                                 if (locServer[0].equals(messagesServer[4])) {
                                     Log.e(TAG, "location found in list");
@@ -440,31 +441,58 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
                                             }
                                             break;
                                         }
-                                    } else {
-                                        if (mScanResults != null) {
-                                            for (ScanResult wifi : mScanResults) {
-                                                if (wifi.SSID.equals(locServer[1])) {
-                                                    Log.e(TAG, "WIFI location check");
-                                                    String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
-                                                    messageStringArray = messagesServer;
-                                                    Log.e(TAG, finalMessage);
-                                                    // Notify anyone listening for broadcasts about the new location.
-                                                    Intent intent = new Intent(ACTION_BROADCAST);
-                                                    // intent.putExtra(EXTRA_LOCATION, location);
-                                                    intent.putExtra(EXTRA_STRING, finalMessage);
-                                                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-                                                    // Update notification content if running as a foreground service.
-                                                    if (serviceIsRunningInForeground(this)) {
-                                                        mNotificationManager.notify(NOTIFICATION_ID, getNotification());
-                                                    }
-                                                    break;
-                                                }
+                                    }
+                                }
+                            }
+                            SharedPreferences sharedPeers = PreferenceManager.getDefaultSharedPreferences(this);
+                            String peerListusername = sharedPeers.getString("peerList", "").split("\\s+")[0];
+                            Log.e(TAG, "Peer List: " + peerListusername);
+                            for (String[] locServer : locationList) {
+                                if (locServer[0].equals(messagesServer[4])) {
+                                    Log.e(TAG, "location found in list");
+                                    if (locServer.length == 2) {
+                                        if (locServer[1].equals(peerListusername)) {
+                                            Log.e(TAG, "SSID location check");
+                                            String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                            messageStringArray = messagesServer;
+                                            Log.e(TAG, finalMessage);
+                                            // Notify anyone listening for broadcasts about the new location.
+                                            Intent intent = new Intent(ACTION_BROADCAST);
+                                            // intent.putExtra(EXTRA_LOCATION, location);
+                                            intent.putExtra(EXTRA_STRING, finalMessage);
+                                            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+                                            mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                            // Update notification content if running as a foreground service.
+                                            if (serviceIsRunningInForeground(this)) {
+                                                mNotificationManager.notify(NOTIFICATION_ID, getNotification());
                                             }
+                                            break;
                                         }
                                     }
                                 }
                             }
+
+                                /* if (mScanResults != null) {
+                                    for (ScanResult wifi : mScanResults) {
+                                        if (wifi.SSID.equals(locServer[1])) {
+                                            Log.e(TAG, "WIFI location check");
+                                            String finalMessage = "User: " + messagesServer[5] + ", Title: " + messagesServer[0];
+                                            messageStringArray = messagesServer;
+                                            Log.e(TAG, finalMessage);
+                                            // Notify anyone listening for broadcasts about the new location.
+                                            Intent intent = new Intent(ACTION_BROADCAST);
+                                            // intent.putExtra(EXTRA_LOCATION, location);
+                                            intent.putExtra(EXTRA_STRING, finalMessage);
+                                            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+                                            // Update notification content if running as a foreground service.
+                                            if (serviceIsRunningInForeground(this)) {
+                                                mNotificationManager.notify(NOTIFICATION_ID, getNotification());
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } */
                         }
                     }
                 }
@@ -533,14 +561,4 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
         return false;
     };
 
-
-    private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context c, Intent intent) {
-            if (intent.getAction().equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
-                mScanResults = mWifiManager.getScanResults();
-                // add your logic here
-            }
-        }
-    };
 }
