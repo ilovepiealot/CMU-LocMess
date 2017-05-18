@@ -1,6 +1,5 @@
 package grupo19.locmess19.Activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -8,8 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -71,6 +68,5 @@ public class ViewMessageActivity extends AppCompatActivity  {
     }
     public void return_click(View v){
         this.finish();
-        //startActivity(new Intent(ViewMessageActivity.this, InboxActivity.class));
     }
 }

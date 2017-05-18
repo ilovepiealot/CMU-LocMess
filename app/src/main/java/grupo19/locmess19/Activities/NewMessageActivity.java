@@ -3,7 +3,6 @@ package grupo19.locmess19.Activities;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -29,11 +28,13 @@ import grupo19.locmess19.R;
 
 public class NewMessageActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
+    //DATES
     DateFormat formatDateTime = DateFormat.getDateInstance();
     DateFormat formatTime = DateFormat.getTimeInstance(DateFormat.SHORT);
     Calendar dateBegin = Calendar.getInstance();
     Calendar dateEnd = Calendar.getInstance();
     Calendar dateCurrent = Calendar.getInstance();
+    //GUI
     Spinner spinner;
     private TextView text;
     private TextView text_end;
@@ -44,26 +45,25 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private Button btn_time;
     private Button btn_time_end;
     private Button createnewmessage;
+    //USER
     public String username;
     private int sessionID = 0;
-
+    //KEYS
     private Button whitelist_keys;
     private TextView whitelist_keys_selected;
     private Button blacklist_keys;
     private TextView blacklist_keys_selected;
-
-    String receivedLocationsTitlesString;
-    //String[] receivedLocationsTitles;
-    List<String> receivedLocationsTitles = new ArrayList<>();
-    ArrayList<String[]> receivedLocations = new ArrayList<>();
-
     String[] keys;
     boolean[] checkedKeys;      //for whitelist
     boolean[] checkedKeysb;  //for blacklist
     ArrayList<Integer>  keysItems = new ArrayList<>();      //for whitelist
     ArrayList<Integer>  keysItemsb = new ArrayList<>();     //for blacklist
     private Map<String, String> getKeys;
-
+    //LOCATIONS
+    String receivedLocationsTitlesString;
+    List<String> receivedLocationsTitles = new ArrayList<>();
+    ArrayList<String[]> receivedLocations = new ArrayList<>();
+    //TIME VALIDATION
     boolean validInterval = false;
     boolean validStart= false;
 
@@ -185,7 +185,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
             }
         });
 
-        //LISTENER FOR BLACKLIST KEYS SELECTION
+    //LISTENER FOR BLACKLIST KEYS SELECTION
         blacklist_keys.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,9 +274,6 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
                 createnewmessage(v);
             }
         });
-
-        //updateLabel();
-        //updateTimeLabel();
     }
 
 
@@ -286,7 +283,6 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private void updateLabelEnd(){
         text_end.setText(formatDateTime.format(dateEnd.getTime()));
     }
-
     private void updateTimeLabel(){
         text_time.setText(formatTime.format(dateBegin.getTime()));
     }
@@ -296,16 +292,13 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
     public void cancel_click(View v){
         this.finish();
-        //startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
     }
-
     private void updateTime(){
         new TimePickerDialog(this, t, dateBegin.get(Calendar.HOUR_OF_DAY), dateBegin.get(Calendar.MINUTE), true).show();
     }
     private void updateTimeEnd(){
         new TimePickerDialog(this, t_end, dateEnd.get(Calendar.HOUR_OF_DAY), dateEnd.get(Calendar.MINUTE), true).show();
     }
-
     private void updateDate(){
         new DatePickerDialog(this, d, dateBegin.get(Calendar.YEAR), dateBegin.get(Calendar.MONTH), dateBegin.get(Calendar.DAY_OF_MONTH)).show();
     }
@@ -354,7 +347,6 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         TextView mylocation = (TextView) view;
-        //Toast.makeText(this, "Selected Location: " +mylocation.getText(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -391,7 +383,6 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
         } else {
             if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, sessionID, wkeys, bkeys)) {
-                //startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
                 this.finish();
             } else {
                 Toast.makeText(NewMessageActivity.this, "Error on creating message.", Toast.LENGTH_SHORT).show();

@@ -1,4 +1,3 @@
-qwerty#YOLO#asdfghj
-poiuytr#YOLO#çlkjhgfd
 teste#YOLO#keys de teste
 teste#YOLO#keys de teste
+teste de keys do qwerty#YOLO#valor de teste de keys do qwerty

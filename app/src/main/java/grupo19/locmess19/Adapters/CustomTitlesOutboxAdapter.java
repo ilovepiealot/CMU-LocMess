@@ -25,17 +25,11 @@ public class CustomTitlesOutboxAdapter extends ArrayAdapter<String> {
         super(context, 0, receivedTitles);
         this.receivedTitles = receivedTitles;
         server = new ServerCommunication("10.0.2.2", 11113);
-
-       //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-       //username = sharedPreferences.getString("loggedUser", "");
-
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        //SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(convertView.getContext());
-        //username = sharedPreferences.getString("loggedUser", "");
 
         // Get the data item for this position
         final String location = receivedTitles.get(position);
