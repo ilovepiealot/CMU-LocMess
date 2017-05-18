@@ -38,8 +38,11 @@ public class MainActivity extends AppCompatActivity  {
         String username = ((EditText) findViewById(R.id.username)).getText().toString();
         String password = ((EditText) findViewById(R.id.password)).getText().toString();
 
-        new LoginOperation().execute(new LoginParams(username, password));
-
+        if (!username.isEmpty() && !password.isEmpty()) {
+            new LoginOperation().execute(new LoginParams(username, password));
+        } else {
+            Toast.makeText(MainActivity.this, "Please fill all fields.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private static class LoginParams {

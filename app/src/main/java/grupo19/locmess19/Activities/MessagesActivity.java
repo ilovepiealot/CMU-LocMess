@@ -30,6 +30,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.Fragments.Locations;
 import grupo19.locmess19.Fragments.MessagesMenu;
 import grupo19.locmess19.Fragments.ProfilesFragment;
@@ -72,6 +73,8 @@ public class MessagesActivity extends AppCompatActivity implements
     private String username;
     private int sessionID;
 
+    private ServerCommunication server;
+
     // Monitors the state of the connection to the service.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -113,6 +116,8 @@ public class MessagesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_messages);
         guiSetButtonListeners();
         guiUpdateInitState();
+
+        server = new ServerCommunication("10.0.2.2", 11113);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -250,10 +255,21 @@ public class MessagesActivity extends AppCompatActivity implements
             return true;
         }
         if (id == R.id.action_signout) {
-            startActivity(new Intent(MessagesActivity.this, MainActivity.class));
+            if (server.logOut(sessionID)) {
+                startActivity(new Intent(MessagesActivity.this, MainActivity.class));
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (server.logOut(sessionID)) {
+            startActivity(new Intent(MessagesActivity.this, MainActivity.class));
+            finish();
+        }
     }
 
     // A placeholder fragment containing a simple view.

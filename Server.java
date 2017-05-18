@@ -78,7 +78,10 @@ public class Server implements Runnable {
 					case "login":
 						oos.writeObject(loginUser(vs[1], vs[2]));
 						break;
-
+					case "logout":
+						int sessionID = Integer.parseInt(vs[1]);
+						oos.writeObject(logOutUser(sessionID));
+						break;
 					case "register":
 						oos.writeObject(registerUser(vs[1], vs[2]));
 						break;
@@ -196,8 +199,8 @@ public class Server implements Runnable {
 					System.out.println(res + "NO!");
 			}
 	    	usersScanner.close();
-	    	int randomNr = ThreadLocalRandom.current().nextInt(1, 1000);
 	    	while(!sessionIDs.containsValue(username)){
+		    	int randomNr = ThreadLocalRandom.current().nextInt(1, 1000);
 		    	if(!sessionIDs.containsKey(randomNr)){
 		    		sessionIDs.put(randomNr, username);
 		    		sessionID = randomNr;
@@ -208,6 +211,14 @@ public class Server implements Runnable {
 			e.printStackTrace();
 		}
 		return sessionID;
+    }
+
+    public boolean logOutUser(int sessionID) {
+    	if (sessionIDs.containsKey(sessionID)) {
+    		String username = sessionIDs.get(sessionID);
+    		return sessionIDs.remove(sessionID, username);
+    	}
+    	return false;
     }
     
     public boolean registerUser(String username, String password){

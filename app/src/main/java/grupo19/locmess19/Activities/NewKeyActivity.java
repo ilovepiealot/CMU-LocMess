@@ -122,7 +122,8 @@ public class NewKeyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(context, MessagesActivity.class);
                 startActivity(intent);
-                finish();            }
+                finish();
+            }
         });
 
         addNewKeyButton.setOnClickListener(new View.OnClickListener() {
