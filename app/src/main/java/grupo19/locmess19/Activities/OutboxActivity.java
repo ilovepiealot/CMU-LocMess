@@ -20,7 +20,6 @@ import grupo19.locmess19.R;
 
 public class OutboxActivity extends AppCompatActivity{
     private ServerCommunication server;
-    ListView outboxlistview;
     private Map<String, String> messageTitles;
     String[] extra;
     private int sessionID = 0;
@@ -36,7 +35,8 @@ public class OutboxActivity extends AppCompatActivity{
         sessionID = sharedPreferences.getInt("sessionID", 0);
 
         messageTitles = server.getTitles(sessionID, outbox);
-        ArrayList<String> receivedTitles = new ArrayList<String>();
+        ArrayList<String> receivedTitles = new ArrayList<>();
+
         //receives map of titles and filters both key and value and adds to array list
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {
             String title = entry.getKey();
@@ -48,7 +48,6 @@ public class OutboxActivity extends AppCompatActivity{
         //populates the listview with the received titles
         ListView outboxlistview = (ListView) findViewById(R.id.outboxlistview);
         CustomTitlesOutboxAdapter outboxlist = new CustomTitlesOutboxAdapter(this, receivedTitles);
-        //ListAdapter outboxlist = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, receivedTitles);
         outboxlistview.setAdapter(outboxlist);
         //listener for click on listview row, identifies the entry by the message ID and passes it as an extra for viewactivity
         outboxlistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {

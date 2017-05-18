@@ -14,7 +14,6 @@ import java.util.Map;
 import grupo19.locmess19.Adapters.CustomTitlesInboxAdapter;
 import grupo19.locmess19.Communications.ServerCommunication;
 import grupo19.locmess19.R;
-import grupo19.locmess19.Services.LocationUpdatesService;
 
 /**
  * Created by super on 10/04/2017.
@@ -23,8 +22,6 @@ import grupo19.locmess19.Services.LocationUpdatesService;
 public class InboxActivity extends AppCompatActivity{
 
     private ServerCommunication server;
-    ListView inboxlistview;
-    //private List<AbstractMap.SimpleEntry<String,String>> messageTitles;
     private Map<String, String> messageTitles;
     String[] extra;
     int sessionID;
@@ -50,9 +47,11 @@ public class InboxActivity extends AppCompatActivity{
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sessionID = sharedPreferences.getInt("sessionID", 0);
+
         //retrieves message titles for this box and current user
         messageTitles = server.getTitles(sessionID,inbox);
-        ArrayList<String> receivedTitles = new ArrayList<String>();
+        ArrayList<String> receivedTitles = new ArrayList<>();
+
         //receives map of titles and filters both key and value and adds to array list
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {
             String title = entry.getKey();
@@ -64,8 +63,8 @@ public class InboxActivity extends AppCompatActivity{
         //populates the listview with the received titles
         ListView inboxlistview = (ListView) findViewById(R.id.inboxlistview);
         CustomTitlesInboxAdapter inboxlist = new CustomTitlesInboxAdapter(this, receivedTitles);
-        //ListAdapter inboxlist = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, receivedTitles);
         inboxlistview.setAdapter(inboxlist);
+
         //listener for click on listview row, identifies the entry by the message ID and passes it as an extra for viewactivity
         inboxlistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

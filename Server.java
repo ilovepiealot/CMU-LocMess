@@ -472,14 +472,7 @@ public class Server implements Runnable {
     }
         
     public boolean createNewMessage(String messageTitle, String messageContent, String messageStartDate, String messageEndDate, String location, String username2, String messageIDString, String wkeys, String bkeys){
-		
 		boolean created = true;
-		/*messagesFile = new File("files/messages_" + username2 + ".txt");
-		try{
-			if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
-		} catch (IOException e){
-			System.out.println(e);
-		}*/
 		PrintWriter messagesWriter;
 		PrintWriter messagesGlobalWriter;
 		
@@ -493,7 +486,6 @@ public class Server implements Runnable {
 			} catch (IOException e) {
 				System.out.println(e);
 			}
-		//oos.writeObject(created);
 		return created;
     }
 
@@ -509,13 +501,13 @@ public class Server implements Runnable {
 			} catch (IOException e) {
 				System.out.println(e);
 			}
-		//oos.writeObject(created);
 		return created;
     } 
 
 	public HashMap<String, String> getTitles(String username, String box) {
 		HashMap<String, String> messageTitles = new HashMap<String,String>();
-		messagesFile = new File("files/messages_" + username + ".txt"); 		//caso sejam titulos da outbox apenas é lido o ficheiro do utilizador
+		//caso sejam titulos da outbox apenas é lido o ficheiro do utilizador
+		//messagesFile = new File("files/messages_" + username + ".txt"); 		
 		if (box.equals("outbox")){
 			try {
 				Scanner	messagesScanner = new Scanner(messagesFile);
@@ -523,7 +515,8 @@ public class Server implements Runnable {
 					String wholeLine = messagesScanner.nextLine();
 					if (! (wholeLine.isEmpty())){
 						String[] arr = wholeLine.split(SEPARATOR);
-						if (username.equals(arr[5])){							//compara o user que fez o pedido com o campo de criador da mensagem, se igual entao retorna para outbox
+						//compara o user que fez o pedido com o campo de criador da mensagem, se igual entao retorna para outbox
+						if (username.equals(arr[5])){							
 							System.out.println("arr[0]: " + arr[0]);
 							System.out.println("arr[1]: " + arr[6]);
 							messageTitles.put(arr[0],arr[6]);
@@ -531,12 +524,12 @@ public class Server implements Runnable {
 					}
 				}
 				messagesScanner.close();
-				//System.out.println("TITULOS: " + messageTitles);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-		else if (box.equals("inbox")){											//caso sejam titulos para a inbox é verificado o ficheiro global 
+		//caso sejam titulos para a inbox é verificado o ficheiro global
+		else if (box.equals("inbox")){											 
 			try {
 				Scanner	messagesScanner = new Scanner(messagesFile);
 				Scanner messagesGlobalScanner = new Scanner(messagesGlobalFile);
@@ -544,7 +537,8 @@ public class Server implements Runnable {
 					String wholeLine = messagesScanner.nextLine();
 					if (! (wholeLine.isEmpty())){
 						String[] arr = wholeLine.split(SEPARATOR);
-						if (!(username.equals(arr[5]))){					//são seleccionadas as mensagens que não foram criadas pelo utilizador corrente
+						//são seleccionadas as mensagens que não foram criadas pelo utilizador corrente
+						if (!(username.equals(arr[5]))){					
 							System.out.println("arr[0]: " + arr[0]);
 							System.out.println("arr[1]: " + arr[6]);
 							messageTitles.put(arr[0],arr[6]);
@@ -552,7 +546,6 @@ public class Server implements Runnable {
 					}
 				}
 				messagesScanner.close();
-				//System.out.println("TITULOS: " + messageTitles);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -562,7 +555,6 @@ public class Server implements Runnable {
 
 	public String getMessage(String id, String username){
 		String titletest = "";
-		//messagesFile = new File("files/messages_" + username + ".txt");
 		try {
 			Scanner messagesGlobalScanner = new Scanner(messagesGlobalFile);
 			while (messagesGlobalScanner.hasNext()) {
@@ -570,13 +562,11 @@ public class Server implements Runnable {
 				if (! (wholeLine.isEmpty())){
 					String[] arr = wholeLine.split(SEPARATOR);
 					if(id.equals(arr[6])){
-						//System.out.println("ENCONTREI A MENSAGEM:" + wholeLine);
 						titletest = wholeLine;
 					}
 				}
 			}
 			messagesGlobalScanner.close();
-			//System.out.println("PASSAR MENSAGEM:" + titletest);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -584,8 +574,6 @@ public class Server implements Runnable {
 	}
 	
 	public boolean deleteMessage(String messageDeleteID, String username){
-		//File messageFile = new File("files/messages.txt");
-		//File messageGlobalFile = new File("files/messages_" + username + ".txt");
 		File messagesFileTemp = new File("files/messagesTemp_" + username + ".txt");
 		File messagesGlobalFileTemp = new File("files/messagesTemp.txt");
 		
