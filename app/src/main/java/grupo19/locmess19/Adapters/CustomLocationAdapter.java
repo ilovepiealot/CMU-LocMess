@@ -47,7 +47,6 @@ public class CustomLocationAdapter extends ArrayAdapter<String> {
         deleteBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
                 boolean deleted = server.deleteLocation(locations.get(position));
                 locations.remove(position);
                 notifyDataSetChanged();

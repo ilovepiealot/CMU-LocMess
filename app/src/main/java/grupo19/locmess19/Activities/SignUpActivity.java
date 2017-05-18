@@ -23,7 +23,6 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         server = new ServerCommunication("10.0.2.2", 11113);
-
     }
 
     public void register_click(View v){
@@ -44,7 +43,6 @@ public class SignUpActivity extends AppCompatActivity {
             this.password = password;
         }
     }
-
 
     private class RegisterOperation extends AsyncTask<RegisterParams, Void, String> {
 
@@ -74,7 +72,6 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {}
     }
-
 
     public void backtologin_click(View v){
         finish();

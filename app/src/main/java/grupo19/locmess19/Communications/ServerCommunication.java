@@ -23,12 +23,10 @@ public class ServerCommunication {
     private String ip;
     private int port;
     String a;
-    int id;
 
     private boolean registered = false;
     private boolean logged = false;
     private boolean created = false;
-    private boolean getted = false;
     private boolean destroyed = false;
 
     private HashMap<String, String> userKeys = null;
@@ -38,7 +36,6 @@ public class ServerCommunication {
     private ArrayList<String[]> messageList = null;
     private String[] locationDetails = null;
     private int sessionID = -1;
-
 
     public ServerCommunication(String ip, int port) {
         this.ip = ip;
@@ -53,9 +50,7 @@ public class ServerCommunication {
                 public void run() {
 
                     Socket s = null;
-
                     try {
-
                         s = new Socket(ip, port);
 
                         Object[] o = createCommunication(s);
@@ -65,9 +60,7 @@ public class ServerCommunication {
                         oos.writeObject("login:" + username + ":" + password);
                         //blocks
                         sessionID = (int) ois.readObject();
-                        //logged = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(logged));
-
                         oos.writeObject("quit");
 
                     } catch (IOException | ClassNotFoundException e) {
@@ -75,7 +68,6 @@ public class ServerCommunication {
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
@@ -83,7 +75,6 @@ public class ServerCommunication {
         } catch (InterruptedException e) {;
             e.printStackTrace();
         }
-
         return sessionID;
     }
 
@@ -95,7 +86,6 @@ public class ServerCommunication {
                 public void run() {
 
                     Socket s = null;
-
                     try {
 
                         s = new Socket(ip, port);
@@ -103,15 +93,11 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("register:" + username + ":" + password);
                         //blocks
-                        // String a = (String) ois.readObject();
                         registered = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(registered));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -121,11 +107,9 @@ public class ServerCommunication {
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return registered;
     }
 
@@ -139,21 +123,16 @@ public class ServerCommunication {
                     Socket s = null;
 
                     try {
-
                         s = new Socket(ip, port);
 
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + sessionID + SEPARATOR + wkeys + SEPARATOR + bkeys);
                         //blocks
-                        // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -163,11 +142,9 @@ public class ServerCommunication {
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -187,15 +164,11 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + sessionID + SEPARATOR + id + SEPARATOR + wkeys + SEPARATOR + bkeys);
                         //blocks
-                        // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -205,11 +178,9 @@ public class ServerCommunication {
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -229,15 +200,10 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("getTitles:" + sessionID + ":" + box);
                         //blocks
-                        //a = (String) ois.readObject();
-
                         messageTitles = (Map<String, String>) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
@@ -249,11 +215,9 @@ public class ServerCommunication {
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {;
             e.printStackTrace();
         }
-
         return messageTitles;
     }
 
@@ -272,13 +236,10 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("getMessage:" + id + ":" + sessionID);
                         //blocks
                         a = (String) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
@@ -290,11 +251,9 @@ public class ServerCommunication {
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {;
             e.printStackTrace();
         }
-
         return a;
     }
 
@@ -310,33 +269,25 @@ public class ServerCommunication {
                     try {
 
                         s = new Socket(ip, port);
-
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("savenewkey:" + sessionID + SEPARATOR + key + SEPARATOR + value);
                         //blocks
-                        // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -351,30 +302,23 @@ public class ServerCommunication {
                     try {
 
                         s = new Socket(ip, port);
-
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         oos.writeObject("getuserkeys:" + sessionID);
-
                         userKeys = (HashMap<String, String>) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return userKeys;
     }
 
@@ -389,30 +333,23 @@ public class ServerCommunication {
                     try {
 
                         s = new Socket(ip, port);
-
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         oos.writeObject("getallkeys:");
-
                         allKeys = (HashMap<String, String>) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return allKeys;
     }
 
@@ -433,25 +370,19 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         oos.writeObject("getexistinglocations");
-
                         locationList = (ArrayList<String[]>) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return locationList;
     }
 
@@ -471,30 +402,22 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("savenewlocationGPS:" + locName + SEPARATOR + locLatitude + SEPARATOR + locLongitude + SEPARATOR + locRadius);
                         //blocks
-                        // String a = (String) ois.readObject();
-                        // locationDetails = (String[]) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -514,30 +437,22 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("savenewlocationWifi:" + locName + SEPARATOR + locSSID);
                         //blocks
-                        // String a = (String) ois.readObject();
-                        // locationDetails = (String[]) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -557,21 +472,16 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("deletelocation:" + locName);
                         //blocks
-                        // String a = (String) ois.readObject();
                         destroyed = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(destroyed));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
@@ -579,7 +489,6 @@ public class ServerCommunication {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return destroyed;
     }
 
@@ -599,28 +508,21 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("getlocationdetails:" + locName);
                         //blocks
-                        // String a = (String) ois.readObject();
                         locationDetails = (String[]) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return locationDetails;
     }
 
@@ -636,17 +538,13 @@ public class ServerCommunication {
                     try {
 
                         s = new Socket(ip, port);
-
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-
                         oos.writeObject("deletekey:" + sessionID + SEPARATOR + key + SEPARATOR + value);
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -655,11 +553,9 @@ public class ServerCommunication {
 
             t.start();
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return created;
     }
 
@@ -674,22 +570,17 @@ public class ServerCommunication {
                     try {
 
                         s = new Socket(ip, port);
-
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         oos.writeObject("getexistingmessages");
-
                         messageList = (ArrayList<String[]>) ois.readObject();
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
@@ -697,7 +588,6 @@ public class ServerCommunication {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return messageList;
     }
 
@@ -720,26 +610,20 @@ public class ServerCommunication {
                         String id = id_title.split(":")[0];
                         oos.writeObject("deleteMessage:" + id + ":" + sessionID);
                         //blocks
-                        // String a = (String) ois.readObject();
                         destroyed = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(destroyed));
-
                         oos.writeObject("quit");
-
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
             });
-
             t.start();
             //waits for result
             t.join();
-
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         return destroyed;
     }
 
@@ -754,12 +638,10 @@ public class ServerCommunication {
             ObjectInputStream ois = new ObjectInputStream(is);
 
             return new Object[]{ois, oos};
-
         } catch (IOException e) {
             e.printStackTrace();
             Log.d("ServerCommunication", "error creating communication");
         }
-
         return null;
     }
 }
