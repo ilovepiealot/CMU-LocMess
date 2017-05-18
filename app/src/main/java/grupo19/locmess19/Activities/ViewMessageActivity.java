@@ -25,7 +25,7 @@ public class ViewMessageActivity extends AppCompatActivity  {
     private ServerCommunication server;
     String s;
     String[] receivedMessage;
-    String username;
+    int sessionID = 0;
     Calendar dateStart = Calendar.getInstance();
     Calendar dateEnd = Calendar.getInstance();
 
@@ -41,9 +41,9 @@ public class ViewMessageActivity extends AppCompatActivity  {
         }
         //RECEBE CONTEUDO DE MENSAGEM E POPULA O VIEWMESSAGE
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID",0);
 
-        receivedMessage = server.getMessage(s, username).toString().split("#YOLO#");
+        receivedMessage = server.getMessage(s, sessionID).toString().split("#YOLO#");
 
         TextView message_title = (TextView) findViewById(R.id.message_title);
         TextView messageContent = (TextView) findViewById(R.id.messageContent);

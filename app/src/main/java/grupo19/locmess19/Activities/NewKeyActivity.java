@@ -41,6 +41,7 @@ public class NewKeyActivity extends AppCompatActivity {
     private String key, value;
     private String username;
     private Context context;
+    private int sessionID = 0;
     private boolean keyEdited, valueEdited;
 
     @Override
@@ -51,9 +52,9 @@ public class NewKeyActivity extends AppCompatActivity {
         this.context = this;
 
         server = new ServerCommunication("10.0.2.2", 11113);
-        username =  getIntent().getExtras().getString("username", "");
+        sessionID = getIntent().getExtras().getInt("sessionID", 0);
 
-        userKeyValues = server.getUserKeys(username);
+        userKeyValues = server.getUserKeys(sessionID);
 
         keysSpinner = (Spinner) findViewById(R.id.keys_spinner);
         valuesSpinner = (Spinner) findViewById(R.id.values_spinner);
@@ -152,7 +153,7 @@ public class NewKeyActivity extends AppCompatActivity {
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface arg0,
                                                             int arg1) {
-                                            new DeleteKeyOperation().execute(username, key, value);
+                                            new DeleteKeyOperation().execute(""+sessionID, key, value);
                                             new SaveNewKeyOperation().execute(key, value);
                                             Intent intent = new Intent(context, MessagesActivity.class);
                                             startActivity(intent);
@@ -224,7 +225,7 @@ public class NewKeyActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            if (server.saveNewKey(username, params[0], params[1])) {
+            if (server.saveNewKey(sessionID, params[0], params[1])) {
                 return "Success";
             } else {
                 return "Failed";
@@ -252,7 +253,7 @@ public class NewKeyActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            if (server.deleteKey(params[0],params[1], params[2])) {
+            if (server.deleteKey(sessionID, params[1], params[2])) {
                 return "Success";
             } else {
                 return "Failed";

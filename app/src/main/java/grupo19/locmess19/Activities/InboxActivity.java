@@ -27,7 +27,7 @@ public class InboxActivity extends AppCompatActivity{
     //private List<AbstractMap.SimpleEntry<String,String>> messageTitles;
     private Map<String, String> messageTitles;
     String[] extra;
-    String username;
+    int sessionID;
     String inbox = "inbox";
 
     private static final String TAG = InboxActivity.class.getSimpleName();
@@ -44,14 +44,14 @@ public class InboxActivity extends AppCompatActivity{
         if (finalMessageStringArray != null) {
             Log.e(TAG,finalMessageStringArray[0]);
             server.saveMessageToInbox(finalMessageStringArray[0], finalMessageStringArray[1], finalMessageStringArray[2],
-                    finalMessageStringArray[3], finalMessageStringArray[4], finalMessageStringArray[5],
+                    finalMessageStringArray[3], finalMessageStringArray[4], Integer.parseInt(finalMessageStringArray[5]),
                     finalMessageStringArray[6], finalMessageStringArray[7], finalMessageStringArray[8]);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID", 0);
         //retrieves message titles for this box and current user
-        messageTitles = server.getTitles(username,inbox);
+        messageTitles = server.getTitles(sessionID,inbox);
         ArrayList<String> receivedTitles = new ArrayList<String>();
         //receives map of titles and filters both key and value and adds to array list
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {

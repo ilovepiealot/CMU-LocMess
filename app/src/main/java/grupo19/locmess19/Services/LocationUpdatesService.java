@@ -145,6 +145,8 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
     public String[] messageStringArray;
 
     public String username;
+    private int sessionID = 0;
+
 
     // Current date, time
     Calendar dateCurrent = Calendar.getInstance();
@@ -357,7 +359,7 @@ public class LocationUpdatesService extends Service implements GoogleApiClient.C
             Long CurrentEpoch = dateCurrent.getTimeInMillis();
             messageList = server.getExistingMessages();
             locationList = server.getExistingLocations();
-            userKeys = server.getUserKeys(username);
+            userKeys = server.getUserKeys(sessionID);
             Boolean checkWhitelist = false;
             Boolean checkBlacklist = false;
             ArrayList<String[]> whitelistKeys = new ArrayList<>();

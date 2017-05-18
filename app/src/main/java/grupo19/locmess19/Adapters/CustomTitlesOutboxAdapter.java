@@ -18,7 +18,7 @@ public class CustomTitlesOutboxAdapter extends ArrayAdapter<String> {
 
     private ArrayList<String> receivedTitles = new ArrayList<>();
     private ServerCommunication server;
-    public String username;
+    public int sessionID = 0;
 
 
     public CustomTitlesOutboxAdapter(Context context, ArrayList<String> receivedTitles) {
@@ -52,10 +52,10 @@ public class CustomTitlesOutboxAdapter extends ArrayAdapter<String> {
             public void onClick(View v) {
 
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(v.getContext());
-                username = sharedPreferences.getString("loggedUser", "");
+                sessionID = sharedPreferences.getInt("sessionID", 0);
 
                 //do something
-                boolean deleted = server.deleteMessage(receivedTitles.get(position), username); //TODO DELETE MESSAGE ON SERVER
+                boolean deleted = server.deleteMessage(receivedTitles.get(position), sessionID); //TODO DELETE MESSAGE ON SERVER
                 receivedTitles.remove(position);
                 notifyDataSetChanged();
             }

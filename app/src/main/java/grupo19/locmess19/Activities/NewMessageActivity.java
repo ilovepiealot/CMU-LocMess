@@ -45,6 +45,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
     private Button btn_time_end;
     private Button createnewmessage;
     public String username;
+    private int sessionID = 0;
 
     private Button whitelist_keys;
     private TextView whitelist_keys_selected;
@@ -77,6 +78,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID", 0);
 
     //POPULATE THE SPINNER
         receivedLocationsTitles.add("Please pick an existing location");
@@ -388,7 +390,7 @@ public class NewMessageActivity extends AppCompatActivity implements AdapterView
             Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
 
         } else {
-            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, username, wkeys, bkeys)) {
+            if (server.createNewMessage(message_title, messageContent, start_date, end_date, location, sessionID, wkeys, bkeys)) {
                 //startActivity(new Intent(NewMessageActivity.this, MessagesActivity.class));
                 this.finish();
             } else {

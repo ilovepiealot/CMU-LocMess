@@ -37,6 +37,7 @@ public class ServerCommunication {
     private ArrayList<String[]> locationList = null;
     private ArrayList<String[]> messageList = null;
     private String[] locationDetails = null;
+    private int sessionID = -1;
 
 
     public ServerCommunication(String ip, int port) {
@@ -44,7 +45,7 @@ public class ServerCommunication {
         this.port = port;
     }
 
-    public boolean login(final String username, final String password) {
+    public int login(final String username, final String password) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -63,8 +64,8 @@ public class ServerCommunication {
 
                         oos.writeObject("login:" + username + ":" + password);
                         //blocks
-                        // String a = (String) ois.readObject();
-                        logged = (String.valueOf(ois.readObject())).equals("true");
+                        sessionID = (int) ois.readObject();
+                        //logged = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(logged));
 
                         oos.writeObject("quit");
@@ -83,7 +84,7 @@ public class ServerCommunication {
             e.printStackTrace();
         }
 
-        return logged;
+        return sessionID;
     }
 
     public boolean register(final String username, final String password) {
@@ -128,7 +129,7 @@ public class ServerCommunication {
         return registered;
     }
 
-    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String wkeys, final String bkeys) {
+    public boolean createNewMessage(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final int sessionID, final String wkeys, final String bkeys) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -145,7 +146,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + wkeys + SEPARATOR + bkeys);
+                        oos.writeObject("createnewmessage:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + sessionID + SEPARATOR + wkeys + SEPARATOR + bkeys);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -170,7 +171,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public boolean saveMessageToInbox(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final String username, final String id, final String wkeys, final String bkeys) {
+    public boolean saveMessageToInbox(final String message_title, final String messageContent, final String startdate, final String enddate, final String location, final int sessionID, final String id, final String wkeys, final String bkeys) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -187,7 +188,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + username + SEPARATOR + id + SEPARATOR + wkeys + SEPARATOR + bkeys);
+                        oos.writeObject("savemessagetoinbox:" + SEPARATOR + message_title + SEPARATOR + messageContent + SEPARATOR + startdate + SEPARATOR + enddate + SEPARATOR + location + SEPARATOR + sessionID + SEPARATOR + id + SEPARATOR + wkeys + SEPARATOR + bkeys);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -212,7 +213,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public Map<String, String> getTitles(final String username, final String box) {
+    public Map<String, String> getTitles(final int sessionID, final String box) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -229,7 +230,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("getTitles:" + username + ":" + box);
+                        oos.writeObject("getTitles:" + sessionID + ":" + box);
                         //blocks
                         //a = (String) ois.readObject();
 
@@ -256,7 +257,7 @@ public class ServerCommunication {
         return messageTitles;
     }
 
-    public String getMessage(final String id, final String username){
+    public String getMessage(final String id, final int sessionID){
         try {
             Thread t = new Thread(new Runnable() {
                 @Override
@@ -272,7 +273,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("getMessage:" + id + ":" + username);
+                        oos.writeObject("getMessage:" + id + ":" + sessionID);
                         //blocks
                         a = (String) ois.readObject();
 
@@ -297,7 +298,7 @@ public class ServerCommunication {
         return a;
     }
 
-    public boolean saveNewKey(final String username, final String key, final String value) {
+    public boolean saveNewKey(final int sessionID, final String key, final String value) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -314,7 +315,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("savenewkey:" + username + SEPARATOR + key + SEPARATOR + value);
+                        oos.writeObject("savenewkey:" + sessionID + SEPARATOR + key + SEPARATOR + value);
                         //blocks
                         // String a = (String) ois.readObject();
                         created = (String.valueOf(ois.readObject())).equals("true");
@@ -339,7 +340,7 @@ public class ServerCommunication {
         return created;
     }
 
-    public HashMap<String, String> getUserKeys(final String username) {
+    public HashMap<String, String> getUserKeys(final int sessionID) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -354,7 +355,7 @@ public class ServerCommunication {
                         Object[] o = createCommunication(s);
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
-                        oos.writeObject("getuserkeys:" + username);
+                        oos.writeObject("getuserkeys:" + sessionID);
 
                         userKeys = (HashMap<String, String>) ois.readObject();
 
@@ -623,7 +624,7 @@ public class ServerCommunication {
         return locationDetails;
     }
 
-    public boolean deleteKey(final String key, final String username, final String value) {
+    public boolean deleteKey(final int sessionID, final String key, final String value) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -640,7 +641,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
 
-                        oos.writeObject("deletekey:" + key + SEPARATOR + username + SEPARATOR + value);
+                        oos.writeObject("deletekey:" + sessionID + SEPARATOR + key + SEPARATOR + value);
                         created = (String.valueOf(ois.readObject())).equals("true");
                         Log.d(TAG, String.valueOf(created));
 
@@ -700,7 +701,7 @@ public class ServerCommunication {
         return messageList;
     }
 
-    public boolean deleteMessage(final String id_title, final String username) {
+    public boolean deleteMessage(final String id_title, final int sessionID) {
 
         try {
             Thread t = new Thread(new Runnable() {
@@ -717,7 +718,7 @@ public class ServerCommunication {
                         ObjectInputStream ois = (ObjectInputStream) o[0];
                         ObjectOutputStream oos = (ObjectOutputStream) o[1];
                         String id = id_title.split(":")[0];
-                        oos.writeObject("deleteMessage:" + id + ":" + username);
+                        oos.writeObject("deleteMessage:" + id + ":" + sessionID);
                         //blocks
                         // String a = (String) ois.readObject();
                         destroyed = (String.valueOf(ois.readObject())).equals("true");

@@ -41,6 +41,7 @@ public class ProfilesFragment extends Fragment {
     private String username;
     private HashMap<String,String> keyValueItems;
     private List<SimpleEntry<String, String>> list;
+    private int sessionID = 0;
 
     public static ProfilesFragment newInstance() {
         ProfilesFragment profilesFragment = new ProfilesFragment();
@@ -53,9 +54,12 @@ public class ProfilesFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         username = getArguments().getString("username", "");
+        sessionID = getArguments().getInt("sessionID", 0);
+
         ServerCommunication server = new ServerCommunication("10.0.2.2", 11113);
-        keyValueItems = server.getUserKeys(username);
+        keyValueItems = server.getUserKeys(sessionID);
         list = processKeyList();
+
     }
 
     @Override
@@ -69,7 +73,7 @@ public class ProfilesFragment extends Fragment {
             public void onClick(View view) {
 
                 Intent intent = new Intent(getActivity(), NewKeyActivity.class);
-                intent.putExtra("username", username);
+                intent.putExtra("sessionID", sessionID);
                 startActivity(intent);
                 getActivity().finish();
             }
@@ -77,7 +81,6 @@ public class ProfilesFragment extends Fragment {
 
         TextView usernameText = (TextView) v.findViewById(R.id.UsernameText);
         usernameText.setText(username);
-
 
         ListView keyList = (ListView) v.findViewById(R.id.keys_preview_list);
         KeyValueListAdapter adapter = new KeyValueListAdapter(getActivity(), R.layout.item_key, list);

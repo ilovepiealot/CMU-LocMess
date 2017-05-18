@@ -123,8 +123,10 @@ private SectionsPagerAdapter mSectionsPagerAdapter;
  */
 private ViewPager mViewPager;
 private String username;
+private int sessionID;
 
-    @Override
+
+            @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myReceiver = new MyReceiver();
@@ -147,6 +149,7 @@ private String username;
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID", 0);
 
         // register broadcast receiver
         IntentFilter filter = new IntentFilter();
@@ -342,6 +345,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 ProfilesFragment profilesFragment = new ProfilesFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("username", username);
+                bundle.putInt("sessionID", sessionID);
                 profilesFragment.setArguments(bundle);
                 return profilesFragment;
             case 1:

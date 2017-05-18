@@ -29,7 +29,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
     private Context context;
     private List<SimpleEntry<String,String>> items;
     private ServerCommunication server;
-    private String username;
+    private int sessionID=0;
 
     public KeyValueListAdapter(Context context, int resourceId, List<SimpleEntry<String,String>> items) {
         super(context, resourceId, items);
@@ -37,7 +37,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
         this.items = items;
         server = new ServerCommunication("10.0.2.2", 11113);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID", 0);
 
     }
 
@@ -77,7 +77,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface arg0,
                                                 int arg1) {
-                                new DeleteKeyOperation().execute(username, items.get(position).getKey(), items.get(position).getValue());
+                                new DeleteKeyOperation().execute(items.get(position).getKey(), items.get(position).getValue());
                                 items.remove(position);
                                 notifyDataSetChanged();
                             }
@@ -103,7 +103,7 @@ public class KeyValueListAdapter extends ArrayAdapter<SimpleEntry<String,String>
 
         @Override
         protected String doInBackground(String... params) {
-            if (server.deleteKey(params[0],params[1], params[2])) {
+            if (server.deleteKey(sessionID, params[0], params[1])) {
                 return "Success";
             } else {
                 return "Failed";

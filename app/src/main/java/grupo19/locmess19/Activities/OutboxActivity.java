@@ -23,7 +23,7 @@ public class OutboxActivity extends AppCompatActivity{
     ListView outboxlistview;
     private Map<String, String> messageTitles;
     String[] extra;
-    String username;
+    private int sessionID = 0;
     String outbox = "outbox";
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +33,9 @@ public class OutboxActivity extends AppCompatActivity{
 
         //retrieves message titles for this box and current user
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        username = sharedPreferences.getString("loggedUser", "");
+        sessionID = sharedPreferences.getInt("sessionID", 0);
 
-        messageTitles = server.getTitles(username, outbox);
+        messageTitles = server.getTitles(sessionID, outbox);
         ArrayList<String> receivedTitles = new ArrayList<String>();
         //receives map of titles and filters both key and value and adds to array list
         for (Map.Entry<String,String> entry : messageTitles.entrySet()) {

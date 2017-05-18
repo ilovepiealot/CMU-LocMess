@@ -56,12 +56,13 @@ public class MainActivity extends AppCompatActivity  {
 
         @Override
         protected String doInBackground(LoginParams... params) {
-            if (server.login(params[0].username, params[0].password)) {
+            int sessionID = server.login(params[0].username, params[0].password);
+            if (sessionID!=0) {
 
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("loggedUser", params[0].username);
-                editor.putString("userPassword", params[0].username);
+                editor.putInt("sessionID", sessionID);
                 editor.commit();
 
                 return "Success";

@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.text.SimpleDateFormat;
@@ -21,10 +23,11 @@ public class Server implements Runnable {
 	static File locationsFile = new File("files/locations.txt");
 	static int messageID = 0;
 	String messageIDString = "";
-
+	static ConcurrentHashMap<Integer, String> sessionIDs;
 
 	public Server(Socket csocket) {
 		this.ss = csocket;
+		if(this.sessionIDs == null) this.sessionIDs = new ConcurrentHashMap<Integer, String>();
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -55,7 +58,7 @@ public class Server implements Runnable {
 		String line = "";
 		String[] vs = null;
 		String[] mes = null;
-		
+		String username = "";
     			
         try {
 			OutputStream os = ss.getOutputStream();
@@ -82,16 +85,19 @@ public class Server implements Runnable {
 									
 					case "savenewkey":
 						String[] keyval = vs[1].split(SEPARATOR);
-						oos.writeObject(saveNewKey(keyval[0], keyval[1], keyval[2]));
+						username = sessionIDs.get(Integer.parseInt(keyval[0]));
+						oos.writeObject(saveNewKey(username, keyval[1], keyval[2]));
 						break;
 						
 					case "deletekey":
 						String[] user_key = vs[1].split(SEPARATOR);
-						oos.writeObject(deleteKey(user_key[0], user_key[1], user_key[2]));
+						username = sessionIDs.get(Integer.parseInt(user_key[0]));
+						oos.writeObject(deleteKey(username, user_key[1], user_key[2]));
 						break;
 						
 					case "getuserkeys":
-						HashMap<String, String> userKeys = getUserKeys(vs[1]);
+						username = sessionIDs.get(Integer.parseInt(vs[1]));
+						HashMap<String, String> userKeys = getUserKeys(username);
 						oos.writeObject(userKeys);
 						break;
 						
@@ -128,21 +134,26 @@ public class Server implements Runnable {
 						mes = line.split(SEPARATOR);
 						messageID++;
 						messageIDString = String.valueOf(messageID);
-						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], messageIDString, mes[7], mes[8]));
+						username = sessionIDs.get(Integer.parseInt(mes[6]));
+						oos.writeObject(createNewMessage(mes[1], mes[2], mes[3], mes[4], mes[5], username, messageIDString, mes[7], mes[8]));
 						break;
 					case "savemessagetoinbox":
 						mes = line.split(SEPARATOR);
-						oos.writeObject(saveMessageToInbox(mes[1], mes[2], mes[3], mes[4], mes[5], mes[6], mes[7], mes[8], mes[9]));
+						username = sessionIDs.get(Integer.parseInt(mes[6]));
+						oos.writeObject(saveMessageToInbox(mes[1], mes[2], mes[3], mes[4], mes[5], username, mes[7], mes[8], mes[9]));
 						break;
 					case "getTitles":
-						oos.writeObject(getTitles(vs[1], vs[2]));
+						username = sessionIDs.get(Integer.parseInt(vs[1]));
+						oos.writeObject(getTitles(username, vs[2]));
 						break;
 					
 					case "getMessage":
-						oos.writeObject(getMessage(vs[1], vs[2]));
+						username = sessionIDs.get(Integer.parseInt(vs[2]));
+						oos.writeObject(getMessage(vs[1], username));
 						break;
 						
 					case "deleteMessage":
+						username = sessionIDs.get(Integer.parseInt(vs[2]));
 						oos.writeObject(deleteMessage(vs[1], vs[2]));
 						break;
 
@@ -160,8 +171,9 @@ public class Server implements Runnable {
         }
 	}
 
-    public boolean loginUser(String username, String password){
+    public int loginUser(String username, String password){
 		boolean logged = false;
+		int sessionID = 0;
 		try {
 			Scanner usersScanner = new Scanner(usersFile);
 	    	while (usersScanner.hasNext()) {
@@ -172,7 +184,7 @@ public class Server implements Runnable {
 					logged = true;
 					System.out.println(res + "YES!");
 					
-					messagesFile = new File("files/messages_" + username + ".txt");
+					messagesFile = new File("files/" + username + "_messages.txt");
 					try{
 						if (!messagesFile.exists()) {  messagesFile.createNewFile(); } // Create messages.txt
 					} catch (IOException e){
@@ -184,11 +196,18 @@ public class Server implements Runnable {
 					System.out.println(res + "NO!");
 			}
 	    	usersScanner.close();
-			System.out.println(time() + "User \"" + username + "\" logged in: " + logged + "\n");
+	    	int randomNr = ThreadLocalRandom.current().nextInt(1, 1000);
+	    	while(!sessionIDs.containsValue(username)){
+		    	if(!sessionIDs.containsKey(randomNr)){
+		    		sessionIDs.put(randomNr, username);
+		    		sessionID = randomNr;
+		    	}
+	    	}
+			System.out.println(time() + "User \"" + username + "\" with sessionID=" + sessionID + " logged in: " + logged + "\n");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return logged;
+		return sessionID;
     }
     
     public boolean registerUser(String username, String password){
